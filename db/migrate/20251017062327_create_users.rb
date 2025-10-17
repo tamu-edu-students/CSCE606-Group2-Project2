@@ -4,11 +4,11 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.string :email, index: { unique: true } # Index for fast lookup and uniqueness
       t.string :provider
       t.string :uid, index: true # Index for fast lookup
-      
+
       t.integer :height_cm
       t.float :weight_kg
       t.date :date_of_birth
-      
+
       t.integer :daily_calories_goal
       t.integer :daily_protein_goal_g
       t.integer :daily_fats_goal_g
