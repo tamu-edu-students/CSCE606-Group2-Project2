@@ -1,0 +1,60 @@
+{
+  "Tests:RSpec": {
+    "coverage": {
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/controllers/application_controller.rb": {
+        "lines": [
+          0,
+          null,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/models/application_record.rb": {
+        "lines": [
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      }
+    },
+    "timestamp": 1760685487
+  },
+  "Tests:Cucumber": {
+    "coverage": {
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/controllers/application_controller.rb": {
+        "lines": [
+          0,
+          null,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/models/application_record.rb": {
+        "lines": [
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      }
+    },
+    "timestamp": 1760685499
+  }
+}

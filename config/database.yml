@@ -1,0 +1,21 @@
+# config/database.yml
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+
+development:
+  <<: *default
+  adapter: sqlite3
+  database: db/development.sqlite3
+
+test:
+  <<: *default
+  adapter: sqlite3
+  database: db/test.sqlite3
+
+production:
+  <<: *default
+  # The database URL will be set by your production environment (e.g., Heroku, Render)
+  url: <%= ENV["DATABASE_URL"] %>
