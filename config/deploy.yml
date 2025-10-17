@@ -31,7 +31,8 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
-# Inject ENV variables into containers (secrets come from .kamal/secrets).
+# Inject ENV variables into containers. Secrets should be provided by your CI or
+# platform (e.g. Heroku config vars). Do not store raw secrets in the repo.
 env:
   secret:
     - RAILS_MASTER_KEY
@@ -91,7 +92,7 @@ builder:
 # ssh:
 #   user: app
 
-# Use accessory services (secrets come from .kamal/secrets).
+# Use accessory services (configure these in your deployment platform or CI).
 # accessories:
 #   db:
 #     image: mysql:8.0
