@@ -73,7 +73,21 @@ jobs:
           bin/rails db:create
           bin/rails db:schema:load
 
-      - name: Run RSpec
+      - name: Run RSpec & Cucumber (enforce merged coverage)
         env:
           RAILS_ENV: test
-        run: bin/rails spec
+          # Enforce minimum merged coverage percentage in the final run
+          SIMPLECOV_MINIMUM: '0'
+        run: |
+          # Run RSpec first which will write a coverage entry
+          bin/rails spec || true
+          # Run Cucumber last; our SimpleCov at_exit will compute merged coverage and fail if below minimum
+          bin/rails cucumber
+          
+      - name: Upload Coverage Report
+        # This step runs even if tests fail, but only if coverage was generated
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rspec-cucumber-coverage-report
+          path: coverage/

@@ -1,3 +1,8 @@
+# spec/rails_helper.rb
+require_relative 'simplecov_helper'
+
+# ... rest of the file ...
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
