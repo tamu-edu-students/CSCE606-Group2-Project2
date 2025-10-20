@@ -1,7 +1,7 @@
 {
   "Tests:RSpec": {
     "coverage": {
-      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/controllers/application_controller.rb": {
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/controllers/application_controller.rb": {
         "lines": [
           0,
           null,
@@ -10,15 +10,26 @@
         ],
         "branches": {}
       },
-      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
         "lines": [
           0,
           0
         ],
         "branches": {}
       },
-      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/models/application_record.rb": {
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/models/application_record.rb": {
         "lines": [
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/models/user.rb": {
+        "lines": [
+          0,
+          null,
+          null,
           0,
           0,
           0
@@ -26,35 +37,88 @@
         "branches": {}
       }
     },
-    "timestamp": 1760685487
+    "timestamp": 1760942770
   },
   "Tests:Cucumber": {
     "coverage": {
-      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/controllers/application_controller.rb": {
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/models/user.rb": {
         "lines": [
+          1,
+          null,
+          null,
+          1,
+          null,
+          null
+        ]
+      },
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/models/application_record.rb": {
+        "lines": [
+          1,
+          1,
+          null
+        ]
+      },
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/controllers/users/registrations_controller.rb": {
+        "lines": [
+          null,
+          null,
+          1,
+          null,
+          1,
+          1,
+          null,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
           0,
           null,
+          null,
+          1,
+          1,
+          1,
+          null,
+          null,
           0,
-          0
-        ],
-        "branches": {}
+          0,
+          0,
+          null,
+          null,
+          null
+        ]
       },
-      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/controllers/application_controller.rb": {
         "lines": [
-          0,
-          0
-        ],
-        "branches": {}
+          1,
+          null,
+          1,
+          null
+        ]
       },
-      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/models/application_record.rb": {
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
         "lines": [
-          0,
-          0,
-          0
-        ],
-        "branches": {}
+          1,
+          null
+        ]
+      },
+      "/mnt/c/Users/24392/OneDrive/Desktop/MIS/MIS第三学期/software engineering/CSCE606-Group2-Project2/app/controllers/pages_controller.rb": {
+        "lines": [
+          1,
+          null,
+          1,
+          null,
+          null,
+          1,
+          null,
+          null,
+          1,
+          null,
+          null
+        ]
       }
     },
-    "timestamp": 1760685499
+    "timestamp": 1760945740
   }
 }

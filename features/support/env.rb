@@ -12,6 +12,7 @@ require_relative '../../spec/simplecov_helper'
 
 
 require 'cucumber/rails'
+Capybara.default_driver = :selenium_chrome_headless
 
 # By default, any exception happening in your Rails application will bubble up
 # to Cucumber so that your scenario will fail. This is a different from how
@@ -57,3 +58,4 @@ end
 # The :transaction strategy is faster, but might give you threading problems.
 # See https://github.com/cucumber/cucumber-rails/blob/master/features/choose_javascript_database_strategy.feature
 Cucumber::Rails::Database.javascript_strategy = :truncation
+

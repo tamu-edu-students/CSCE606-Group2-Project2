@@ -70,3 +70,5 @@ group :test do
   # DatabaseCleaner for Cucumber/RSpec transactional cleanup
   gem "database_cleaner-active_record", "~> 2.0"
 end
+
+gem "devise", "~> 4.9"

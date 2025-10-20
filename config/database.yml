@@ -12,8 +12,12 @@ development:
 
 test:
   <<: *default
-  adapter: sqlite3
-  database: db/test.sqlite3
+  adapter: postgresql
+  database: <%= ENV.fetch("PG_TEST_DB") { "csce606_group2_project2_test" } %>
+  username: <%= ENV.fetch("PGUSER") { "postgres" } %>
+  password: <%= ENV.fetch("PGPASSWORD") { "" } %>
+  host: <%= ENV.fetch("PGHOST") { "localhost" } %>
+  port: <%= ENV.fetch("PGPORT") { 5432 } %>
 
 production:
   <<: *default

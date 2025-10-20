@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users, controllers: { registrations: 'users/registrations' }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -10,5 +11,10 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  # Minimal root for test environment to avoid routing errors from features
+  root to: "pages#home"
+  get 'confirmation', to: 'pages#confirmation'
+  get 'dashboard', to: 'pages#dashboard'
+  # Avoid routing errors for favicon requests during system tests
+  get '/favicon.ico', to: redirect('/icon.png')
 end
