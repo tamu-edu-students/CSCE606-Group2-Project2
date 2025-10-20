@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   root "welcome#index"
 
-  get 'auth/google_oauth2/callback', to: 'sessions#omniauth'
-
+  get "auth/google_oauth2/callback", to: "sessions#omniauth"
+  get "/auth/failure", to: "sessions#failure"
+  delete "/sign_out", to: "sessions#destroy", as: "sign_out"
 end
