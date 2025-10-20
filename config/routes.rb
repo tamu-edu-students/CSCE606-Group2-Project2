@@ -11,4 +11,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  root "welcome#index"
+
+  get 'auth/google_oauth2/callback', to: 'sessions#omniauth'
+
 end
