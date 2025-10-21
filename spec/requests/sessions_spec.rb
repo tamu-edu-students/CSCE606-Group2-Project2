@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 require "rails_helper"
 
 RSpec.describe "Sessions", type: :request do
@@ -28,5 +29,12 @@ RSpec.describe "Sessions", type: :request do
   it "handles failure" do
     get "/auth/failure", params: { message: "denied" }
     expect(response).to redirect_to(root_path)
+=======
+require 'rails_helper'
+
+RSpec.describe "Sessions", type: :request do
+  describe "GET /index" do
+    pending "add some examples (or delete) #{__FILE__}"
+>>>>>>> cc7cdad230a336ee234e8e0c612ecb7822b64a4b
   end
 end

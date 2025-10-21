@@ -1,4 +1,5 @@
 class SessionsController < ApplicationController
+<<<<<<< HEAD
   skip_before_action :verify_authenticity_token, only: :create
   skip_before_action :set_current_user, only: :create
 
@@ -31,5 +32,39 @@ class SessionsController < ApplicationController
 
   def symbolized_auth(auth)
     (auth.respond_to?(:to_h) ? auth.to_h : auth).deep_symbolize_keys
+=======
+  # This handles the /auth/failure route
+  def failure
+    flash[:alert] = "Authentication failed. Please try again."
+    redirect_to root_path
+  end
+
+  # This handles the /auth/google_oauth2/callback route
+  def omniauth
+    auth = request.env["omniauth.auth"]
+
+    # This line will now work because the controller can find the User model
+    @user = User.find_or_create_by(uid: auth["uid"], provider: auth["provider"]) do |u|
+      u.email = auth["info"]["email"]
+    end
+
+    session[:user_id] = @user.id
+
+    if @user.height_cm.nil? || @user.weight_kg.nil?
+      flash[:notice] = "Welcome! Please complete your profile."
+      # This next line will still cause an error, but that's for Ticket 6
+      redirect_to edit_user_path(@user)
+    else
+      flash[:notice] = "Signed in successfully."
+      redirect_to root_path
+    end
+  end
+
+  # This handles the DELETE /sign_out route
+  def destroy
+    session[:user_id] = nil
+    flash[:notice] = "Signed out successfully."
+    redirect_to root_path
+>>>>>>> cc7cdad230a336ee234e8e0c612ecb7822b64a4b
   end
 end

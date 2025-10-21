@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class User < ApplicationRecord
   has_many :food_logs, dependent: :destroy
 
@@ -152,4 +153,9 @@ class User < ApplicationRecord
     self.email = email&.downcase
     self.sex = sex&.downcase if sex.present?
   end
+=======
+# app/models/user.rb
+class User < ApplicationRecord
+  # We will add validations and associations here later
+>>>>>>> cc7cdad230a336ee234e8e0c612ecb7822b64a4b
 end
