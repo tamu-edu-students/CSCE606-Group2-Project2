@@ -1,20 +1,18 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  root "home#index"
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  get "/sign_in", to: "sessions#new"
+  delete "/sign_out", to: "sessions#destroy"
 
-  root "welcome#index"
-
-  get "auth/google_oauth2/callback", to: "sessions#omniauth"
+  get "/auth/:provider/callback", to: "sessions#create"
   get "/auth/failure", to: "sessions#failure"
-  delete "/sign_out", to: "sessions#destroy", as: "sign_out"
+
+  resource :dashboard, only: :show
+  resource :onboarding, only: %i[new create], controller: :onboarding
+  resources :food_logs, only: %i[index new create destroy]
+
+  # Add route for welcome/index to fix request spec
+  get "/welcome/index", to: "welcome#index"
 end

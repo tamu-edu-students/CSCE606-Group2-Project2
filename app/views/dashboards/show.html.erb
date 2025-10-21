@@ -1,0 +1,68 @@
+<h1 class="page-title">Hello, <%= current_user.email %></h1>
+
+<section class="summary-card">
+  <h2>Today's goals</h2>
+  <dl class="macro-summary">
+    <div>
+      <dt>Calories left</dt>
+      <dd><%= number_with_delimiter(@remaining_macros[:calories]) %> calories</dd>
+    </div>
+    <div>
+      <dt>Protein</dt>
+      <dd><%= @remaining_macros[:protein_g] %> g</dd>
+    </div>
+    <div>
+      <dt>Fats</dt>
+      <dd><%= @remaining_macros[:fats_g] %> g</dd>
+    </div>
+    <div>
+      <dt>Carbs</dt>
+      <dd><%= @remaining_macros[:carbs_g] %> g</dd>
+    </div>
+  </dl>
+  <p class="mt-2">
+    Need to adjust your targets? <%= link_to "Retake the survey", new_onboarding_path %>.
+  </p>
+</section>
+
+<section class="actions">
+  <%= link_to "Add a food entry", new_food_log_path, class: "btn btn-primary" %>
+  <%= link_to "View all logs", food_logs_path, class: "btn" %>
+</section>
+
+<section class="logs">
+  <h2>Today's entries</h2>
+  <% if @todays_logs.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Food</th>
+          <th>Calories</th>
+          <th>Protein</th>
+          <th>Fats</th>
+          <th>Carbs</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @todays_logs.each do |log| %>
+          <tr>
+            <td>
+              <strong><%= log.food_name %></strong>
+              <small class="text-muted"><%= l log.created_at, format: :short %></small>
+            </td>
+            <td><%= log.calories %></td>
+            <td><%= log.protein_g %> g</td>
+            <td><%= log.fats_g %> g</td>
+            <td><%= log.carbs_g %> g</td>
+            <td>
+              <%= button_to "Remove", food_log_path(log), method: :delete, data: { confirm: "Remove this entry?" }, class: "btn btn-link" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>No entries logged yet. Start by adding your first meal.</p>
+  <% end %>
+</section>

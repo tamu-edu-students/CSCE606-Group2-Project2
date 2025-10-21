@@ -23,6 +23,37 @@
   </head>
 
   <body>
-    <%= yield %>
+    <header class="site-header">
+      <div class="container flex-between">
+        <%= link_to "Calorie Counter", root_path, class: "brand" %>
+        <nav>
+          <ul class="nav-list">
+            <% if user_signed_in? %>
+              <li><%= link_to "Dashboard", dashboard_path %></li>
+              <li><%= link_to "Food logs", food_logs_path %></li>
+              <li><%= link_to "Survey", new_onboarding_path %></li>
+              <li>
+                <%= button_to "Sign out", sign_out_path, method: :delete, form: { class: "inline-form" } %>
+              </li>
+            <% else %>
+              <li><%= link_to "Sign in", sign_in_path %></li>
+            <% end %>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <% flash.each do |type, message| %>
+        <div class="flash <%= type %>"><%= message %></div>
+      <% end %>
+      <%= yield %>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <small>&copy; <%= Time.zone.now.year %> Calorie Counter</small>
+      </div>
+    </footer>
   </body>
 </html>

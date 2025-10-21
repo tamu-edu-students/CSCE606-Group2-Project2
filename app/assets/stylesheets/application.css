@@ -1,47 +1,293 @@
-/*
- * This is a manifest file that'll be compiled into application.css.
- *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+/* Basic layout */
+:root {
+  color-scheme: light dark;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --surface: #ffffff;
+  --surface-dark: #111827;
+  --text: #1f2933;
+  --text-muted: #6b7280;
+  --border: #d1d5db;
+  --border-dark: #1f2937;
+}
 
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--surface);
+  color: var(--text);
+  line-height: 1.6;
+}
 
- /* app/assets/stylesheets/application.css */
-
-/* Styles for the Google Sign-in Button */
-.google-sign-in-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 24px;
-  border: 1px solid #DADCE0;
-  border-radius: 4px;
-  background-color: #FFFFFF;
-  color: #3c4043;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 14px;
-  font-weight: 500;
+a {
+  color: var(--primary);
   text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+.container {
+  width: min(960px, 90vw);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.site-header {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 1rem 0;
+}
+
+.site-header .brand {
+  color: inherit;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  display: flex;
+  align-items: center;
+}
+
+.inline-form {
+  display: inline;
+}
+
+.inline-form button {
+  border: none;
+  background: transparent;
+  color: inherit;
   cursor: pointer;
-  transition: background-color .3s, box-shadow .3s;
+  font: inherit;
+  padding: 0;
 }
 
-/* Hover effect for the button */
-.google-sign-in-button:hover {
-  background-color: #F8F9FA;
-  box-shadow: 0 1px 2px 0 rgba(60,64,67,.30);
+.site-footer {
+  background: #f1f5f9;
+  padding: 1rem 0;
+  text-align: center;
+  color: var(--text-muted);
 }
 
-/* Styles for the icon inside the button */
-.google-icon {
-  margin-right: 12px;
+.flash {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+  background: #eff6ff;
 }
 
-/* Aligns the text vertically with the icon */
-.button-text {
-  line-height: 18px; 
+.flash.alert { background: #fee2e2; }
+.flash.success { background: #dcfce7; }
+.flash.warning { background: #fef3c7; }
+
+.page-title {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.lead {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.summary-card {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  margin-bottom: 2rem;
+}
+
+.macro-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.macro-summary dt {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.macro-summary dd {
+  margin: 0.25rem 0 0;
+  font-size: 1.4rem;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: #e5e7eb;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: #14b8a6;
+  border-color: #0f766e;
+  color: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.table th,
+.table td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  padding: 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+  font: inherit;
+}
+
+.macro-fieldset {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+}
+
+.macro-fieldset legend {
+  padding: 0 0.5rem;
+  font-weight: 600;
+}
+
+.measurement-system,
+.conversion-options {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.measurement-system legend,
+.conversion-options legend {
+  font-weight: 600;
+}
+
+.unit-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.toggle-option {
+  display: inline-block;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #e5e7eb;
+  color: inherit;
+  font-weight: 600;
+}
+
+.toggle-option.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero p {
+  color: var(--text-muted);
+  max-width: 520px;
+  margin: 0 auto 2rem;
+}
+
+.thumbnail img {
+  max-width: 120px;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-list {
+    flex-wrap: wrap;
+  }
 }

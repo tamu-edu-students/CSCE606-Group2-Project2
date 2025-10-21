@@ -8,6 +8,12 @@ gem "propshaft"
 gem "pg", "~> 1.1"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
+# OmniAuth for Google authentication
+gem "omniauth", "~> 2.1"
+gem "omniauth-rails_csrf_protection"
+gem "omniauth-google-oauth2", "~> 1.1"
+# GPT Vision client
+gem "ruby-openai", "~> 7.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
@@ -56,12 +62,13 @@ group :development, :test do
   gem "rspec-rails"
   gem "cucumber-rails", require: false
   gem "simplecov", require: false
+  # Load environment variables in development and test
+  gem "dotenv-rails"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem "dotenv-rails"
 end
 
 group :test do
@@ -70,9 +77,4 @@ group :test do
   gem "selenium-webdriver"
   # DatabaseCleaner for Cucumber/RSpec transactional cleanup
   gem "database_cleaner-active_record", "~> 2.0"
-  gem "dotenv-rails"
 end
-
-gem "omniauth-google-oauth2"
-
-gem "omniauth-rails_csrf_protection"

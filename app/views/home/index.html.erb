@@ -1,0 +1,11 @@
+<section class="hero">
+  <h1>Calorie Counter</h1>
+  <p>
+    Track your daily calories and macros by snapping a photo or entering meals manually.
+  </p>
+  <% unless user_signed_in? %>
+    <%= link_to "Sign in with Google", sign_in_path, class: "btn btn-primary" %>
+  <% else %>
+    <%= link_to "Go to dashboard", dashboard_path, class: "btn btn-secondary" %>
+  <% end %>
+</section>
