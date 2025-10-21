@@ -62,12 +62,13 @@ group :development, :test do
   gem "rspec-rails"
   gem "cucumber-rails", require: false
   gem "simplecov", require: false
+  # Load environment variables in development and test
+  gem "dotenv-rails"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  gem "dotenv-rails"
 end
 
 group :test do
@@ -76,9 +77,5 @@ group :test do
   gem "selenium-webdriver"
   # DatabaseCleaner for Cucumber/RSpec transactional cleanup
   gem "database_cleaner-active_record", "~> 2.0"
-  gem "dotenv-rails"
 end
 
-gem "omniauth-google-oauth2"
-
-gem "omniauth-rails_csrf_protection"
