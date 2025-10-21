@@ -10,7 +10,37 @@
         ],
         "branches": {}
       },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/controllers/sessions_controller.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/controllers/welcome_controller.rb": {
+        "lines": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "branches": {}
+      },
       "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/application_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/sessions_helper.rb": {
+        "lines": [
+          0,
+          0
+        ],
+        "branches": {}
+      },
+      "/Users/pradh/Documents/Khussal/TAMU/1st Semester/Software Engineering/Diet-Tracker/CSCE606-Group2-Project2/app/helpers/welcome_helper.rb": {
         "lines": [
           0,
           0
@@ -26,7 +56,7 @@
         "branches": {}
       }
     },
-    "timestamp": 1760685487
+    "timestamp": 1760996907
   },
   "Tests:Cucumber": {
     "coverage": {

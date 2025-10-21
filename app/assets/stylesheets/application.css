@@ -8,3 +8,40 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+
+ /* app/assets/stylesheets/application.css */
+
+/* Styles for the Google Sign-in Button */
+.google-sign-in-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 24px;
+  border: 1px solid #DADCE0;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  color: #3c4043;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .3s, box-shadow .3s;
+}
+
+/* Hover effect for the button */
+.google-sign-in-button:hover {
+  background-color: #F8F9FA;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,.30);
+}
+
+/* Styles for the icon inside the button */
+.google-icon {
+  margin-right: 12px;
+}
+
+/* Aligns the text vertically with the icon */
+.button-text {
+  line-height: 18px; 
+}
