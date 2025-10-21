@@ -66,22 +66,17 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
           
-      - name: Create Test Database
+      - name: Prepare test database
         env:
           RAILS_ENV: test
-        run: |
-          bin/rails db:create
-          bin/rails db:schema:load
+        run: bin/rails db:prepare
 
       - name: Run RSpec & Cucumber (enforce merged coverage)
         env:
           RAILS_ENV: test
-          # Enforce minimum merged coverage percentage in the final run
-          SIMPLECOV_MINIMUM: '0'
+          SIMPLECOV_MINIMUM: '90'
         run: |
-          # Run RSpec first which will write a coverage entry
-          bin/rails spec || true
-          # Run Cucumber last; our SimpleCov at_exit will compute merged coverage and fail if below minimum
+          bin/rails spec
           bin/rails cucumber
           
       - name: Upload Coverage Report

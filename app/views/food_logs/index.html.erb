@@ -1,0 +1,47 @@
+<h1 class="page-title">Food log history</h1>
+
+<p>
+  This list shows every food entry you've recorded. Use it to review trends or delete items.
+</p>
+
+<% if @food_logs.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Food</th>
+        <th>Calories</th>
+        <th>Protein</th>
+        <th>Fats</th>
+        <th>Carbs</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @food_logs.each do |log| %>
+        <tr>
+          <td><%= l log.created_at, format: :long %></td>
+          <td>
+            <strong><%= log.food_name %></strong>
+            <% if log.photo.attached? %>
+              <div class="thumbnail">
+                <%= image_tag log.photo, alt: "#{log.food_name} photo" %>
+              </div>
+            <% end %>
+          </td>
+          <td><%= log.calories %></td>
+          <td><%= log.protein_g %> g</td>
+          <td><%= log.fats_g %> g</td>
+          <td><%= log.carbs_g %> g</td>
+          <td>
+            <%= button_to "Delete", food_log_path(log), method: :delete, data: { confirm: "Delete this entry?" }, class: "btn btn-link" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>You haven't logged any meals yet.</p>
+<% end %>
+
+<%= link_to "Back to dashboard", dashboard_path, class: "btn" %>

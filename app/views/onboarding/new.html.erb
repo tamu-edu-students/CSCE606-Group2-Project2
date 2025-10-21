@@ -1,0 +1,117 @@
+<h1 class="page-title">Tell us about you</h1>
+
+<p class="lead">
+  We use this information to personalize your daily calorie and macro goals.
+  You can update it at any time from your dashboard.
+</p>
+
+<% if @user.errors.any? %>
+  <div class="flash alert">
+    <strong>We couldn't save your profile yet.</strong>
+    <ul>
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: @user, url: onboarding_path, method: :post, local: true do |form| %>
+  <fieldset class="measurement-system">
+    <legend>Preferred measurement system</legend>
+    <div class="unit-toggle">
+      <%= link_to "Metric (centimeters & kilograms)",
+                  new_onboarding_path(measurement_system: "metric"),
+                  class: "toggle-option #{@measurement_system == 'metric' ? 'active' : ''}" %>
+      <%= link_to "Imperial (feet/inches & pounds)",
+                  new_onboarding_path(measurement_system: "imperial"),
+                  class: "toggle-option #{@measurement_system == 'imperial' ? 'active' : ''}" %>
+    </div>
+  </fieldset>
+
+  <%= hidden_field_tag "user[measurement_system]", @measurement_system %>
+
+  <div class="form-grid">
+    <div class="form-field">
+      <%= form.label :sex, "Sex" %>
+      <%= form.select :sex,
+                      options_for_select([["Female", "female"], ["Male", "male"]], @user.sex),
+                      { prompt: "Select" },
+                      required: true %>
+    </div>
+
+    <div class="form-field">
+      <%= form.label :date_of_birth, "Date of birth" %>
+      <%= form.date_field :date_of_birth, required: true, value: @user.date_of_birth %>
+    </div>
+
+    <div class="form-field">
+      <% height_label =
+           if @measurement_system == "imperial"
+             "Height (e.g., 5'10\" or 70 in)"
+           else
+             "Height (cm)"
+           end %>
+      <%= label_tag "user_height_input", height_label %>
+      <%= text_field_tag "user[height_input]",
+                         @form_params["height_input"],
+                         id: "user_height_input",
+                         inputmode: "decimal" %>
+      <small class="text-muted">
+        <%= @measurement_system == "imperial" ?
+              "Enter feet and inches (5'10\"), inches (70 in), or decimal feet (5.8)." :
+              "Enter your height in whole centimeters." %>
+      </small>
+    </div>
+
+    <div class="form-field">
+      <% weight_label =
+           if @measurement_system == "imperial"
+             "Weight (lbs)"
+           else
+             "Weight (kg)"
+           end %>
+      <%= label_tag "user_weight_input", weight_label %>
+      <%= text_field_tag "user[weight_input]",
+                         @form_params["weight_input"],
+                         id: "user_weight_input",
+                         inputmode: "decimal" %>
+      <small class="text-muted">
+        <%= @measurement_system == "imperial" ?
+              "Enter pounds (e.g., 165 or 165.5 lbs)." :
+              "Enter kilograms (e.g., 68 or 68.5 kg)." %>
+      </small>
+    </div>
+
+    <div class="form-field">
+      <%= form.label :activity_level, "Activity level" %>
+      <%= form.select :activity_level,
+                      options_for_select(
+                        User.activity_levels.keys.map do |level|
+                          [level.humanize, level]
+                        end,
+                        @user.activity_level
+                      ),
+                      {},
+                      required: true %>
+    </div>
+
+    <div class="form-field">
+      <%= form.label :goal_type, "Goal" %>
+      <%= form.select :goal_type,
+                      options_for_select(
+                        User.goal_types.keys.map do |goal|
+                          [goal.humanize, goal]
+                        end,
+                        @user.goal_type
+                      ),
+                      {},
+                      required: true %>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Calculate my goals", class: "btn btn-primary" %>
+    <%= link_to "Cancel", dashboard_path, class: "btn" %>
+  </div>
+<% end %>
