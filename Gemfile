@@ -13,7 +13,7 @@ gem "omniauth", "~> 2.1"
 gem "omniauth-rails_csrf_protection"
 gem "omniauth-google-oauth2", "~> 1.1"
 # GPT Vision client
-gem "ruby-openai", "~> 7.0"
+gem "ruby-openai", "~> 8.3"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
