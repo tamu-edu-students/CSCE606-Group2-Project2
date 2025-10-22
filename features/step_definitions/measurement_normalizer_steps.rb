@@ -119,7 +119,7 @@ When('I mark onboarding controller lines as executed') do
     controller.response = ActionDispatch::Response.new
 
     # Ensure user has required attributes so default_* helpers run
-    user.update!(height_cm: 180, weight_kg: 68.0, date_of_birth: Date.new(1990,1,1), sex: 'female')
+    user.update!(height_cm: 180, weight_kg: 68.0, date_of_birth: Date.new(1990, 1, 1), sex: 'female')
 
     # Allow controller to access current_user via stub so set_user exercises the method
     controller.define_singleton_method(:current_user) { user }
