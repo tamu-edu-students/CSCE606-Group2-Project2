@@ -15,7 +15,14 @@ class FoodLogsController < ApplicationController
     result = service.call
 
     if result.success?
-      redirect_to dashboard_path, success: "Food log saved."
+      if current_user.survey_completed?
+        redirect_to dashboard_path, success: "Food log saved."
+      else
+        # If the user hasn't completed onboarding they will be sent to the
+        # onboarding flow by the dashboard; redirect directly to the onboarding
+        # page so the success flash is shown on the landing page.
+        redirect_to new_onboarding_path, success: "Food log saved."
+      end
     else
       @food_log = result.food_log
       flash.now[:alert] = result.error_message || "We could not analyze that item. Please try again."

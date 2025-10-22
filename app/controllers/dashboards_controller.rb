@@ -12,6 +12,8 @@ class DashboardsController < ApplicationController
   def ensure_survey_completed
     return if current_user.survey_completed?
 
-    redirect_to new_onboarding_path, alert: "Please complete the onboarding survey first."
+    # Preserve any existing flash (e.g. a success message from a previous redirect)
+    flash[:alert] ||= "Please complete the onboarding survey first."
+    redirect_to new_onboarding_path
   end
 end
