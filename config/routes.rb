@@ -13,6 +13,4 @@ Rails.application.routes.draw do
   resource :onboarding, only: %i[new create], controller: :onboarding
   resources :food_logs, only: %i[index new create destroy]
 
-  # Add route for welcome/index to fix request spec
-  get "/welcome/index", to: "welcome#index"
 end
