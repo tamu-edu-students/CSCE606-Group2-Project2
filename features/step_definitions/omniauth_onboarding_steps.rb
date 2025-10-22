@@ -27,6 +27,42 @@ When('I sign in with Google') do
   sleep 0.1
 end
 
+Given('my survey is already completed') do
+  # Mark the current test user as having completed the survey so the
+  # onboarding controller follows the update path instead of the new path.
+  user = User.find_by(email: 'cuke.user@example.com')
+  if user
+    user.update!(survey_completed: true, daily_calories_goal: 2000, daily_protein_goal_g: 100, daily_fats_goal_g: 70, daily_carbs_goal_g: 250)
+  else
+    warn 'Test user not found to mark survey_completed'
+  end
+end
+
+When('I visit the onboarding survey with measurement system {string}') do |system|
+  begin
+    visit new_onboarding_path(measurement_system: system)
+  rescue StandardError
+    visit "/onboarding/new?measurement_system=#{system}"
+  end
+end
+
+When('I submit invalid profile information') do
+  # Submit the form with missing required fields to trigger validation errors
+  begin
+    # Intentionally leave required fields blank
+    fill_in 'user_height_input', with: '' rescue nil
+    fill_in 'user_weight_input', with: '' rescue nil
+    click_button 'Calculate my goals'
+  rescue StandardError => e
+    warn "Failed to submit invalid onboarding form: #{e.class}: #{e.message}"
+    raise
+  end
+end
+
+Then('I should see the notice about updating my profile') do
+  expect(page).to have_content(/Updating your profile will recalculate/i)
+end
+
 When('I visit the onboarding survey') do
   # The onboarding resource is defined as a singular resource; the new path
   # is /onboarding/new. Use the path if available; fall back to a generic URL.
