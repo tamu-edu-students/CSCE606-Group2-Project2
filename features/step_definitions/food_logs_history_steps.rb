@@ -12,7 +12,7 @@ Given('I have logged food on three different days') do
   user = User.find_by!(email: 'cuke.user@example.com')
 
   # Create one entry for each of the last three days with distinct macro values
-  [0, 1, 2].each_with_index do |offset, idx|
+  [ 0, 1, 2 ].each_with_index do |offset, idx|
     t = Time.zone.now.beginning_of_day - offset.days + 12.hours
     user.food_logs.create!(
       food_name: "Meal #{idx + 1}",
@@ -31,7 +31,7 @@ When('I view my food log history') do
 end
 
 Then('I should see date headings for the last three days') do
-  dates = [0, 1, 2].map { |d| I18n.l((Time.zone.today - d.days), format: :long) }
+  dates = [ 0, 1, 2 ].map { |d| I18n.l((Time.zone.today - d.days), format: :long) }
   dates.each do |label|
     expect(page).to have_css('h2', text: label)
   end
