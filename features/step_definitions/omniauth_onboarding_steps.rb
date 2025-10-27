@@ -18,6 +18,21 @@ Given('OmniAuth is in test mode') do
   )
 end
 
+Given('OmniAuth will fail with {word}') do |failure|
+  OmniAuth.config.test_mode = true
+  OmniAuth.config.mock_auth[:google_oauth2] = failure.to_sym
+end
+
+When('I start the Google sign in flow') do
+  visit '/auth/google_oauth2'
+  sleep 0.1
+end
+
+Then('I should be on the homepage') do
+  acceptable = [root_path, '/']
+  expect(acceptable).to include(page.current_path)
+end
+
 When('I sign in with Google') do
   # Trigger the OmniAuth test callback via the standard entry point.
   # Visiting /auth/:provider will start the OmniAuth flow and in test mode

@@ -24,7 +24,19 @@ class SessionsController < ApplicationController
   end
 
   def failure
-    redirect_to root_path, alert: params[:message] || "Google sign-in failed."
+  raw = params[:message].to_s
+  raw = request.env['omniauth.error.type'].to_s if raw.blank? && request.env['omniauth.error.type']
+  raw = request.env['omniauth.error'].to_s if raw.blank? && request.env['omniauth.error']
+    friendly = case raw
+               when /invalid_credentials/i, /access_denied/i
+                 "Authentication was canceled."
+               when /csrf_detected|authenticity_token|invalid_request/i
+                 "Authentication request could not be verified; please try again."
+               else
+                 "Google sign-in failed."
+               end
+
+    redirect_to root_path, alert: friendly
   end
 
   private
