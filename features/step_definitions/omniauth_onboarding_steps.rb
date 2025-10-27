@@ -18,6 +18,21 @@ Given('OmniAuth is in test mode') do
   )
 end
 
+Given('OmniAuth will fail with {word}') do |failure|
+  OmniAuth.config.test_mode = true
+  OmniAuth.config.mock_auth[:google_oauth2] = failure.to_sym
+end
+
+When('I start the Google sign in flow') do
+  visit '/auth/google_oauth2'
+  sleep 0.1
+end
+
+Then('I should be on the homepage') do
+  acceptable = [ root_path, '/' ]
+  expect(acceptable).to include(page.current_path)
+end
+
 When('I sign in with Google') do
   # Trigger the OmniAuth test callback via the standard entry point.
   # Visiting /auth/:provider will start the OmniAuth flow and in test mode
@@ -76,7 +91,8 @@ end
 When('I submit valid profile information') do
   # Fill the form using the exact field names used by the onboarding view
   begin
-    # Measurement system is a hidden field: we can leave default or set metric explicitly
+
+  fill_in 'user[username]', with: 'cuke_user' rescue fill_in 'user_username', with: 'cuke_user' rescue nil
     # Fill required fields that the controller permits/validates
     select 'Female', from: 'Sex' rescue select 'female', from: 'user[sex]' rescue nil
     fill_in 'Date of birth', with: '1990-01-01' rescue fill_in 'user[date_of_birth]', with: '1990-01-01' rescue nil

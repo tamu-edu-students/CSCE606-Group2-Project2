@@ -1,23 +1,23 @@
-<h1 class="page-title">Hello, <%= current_user.email %></h1>
+<h1 class="page-title">Hello, <%= current_user.username.present? ? current_user.username : current_user.email %></h1>
 
 <section class="summary-card">
   <h2>Today's goals</h2>
   <dl class="macro-summary">
     <div>
       <dt>Calories left</dt>
-      <dd><%= number_with_delimiter(@remaining_macros[:calories]) %> calories</dd>
+      <dd data-controller="inline-goals" data-inline-goals-field-value="calories_left" data-inline-goals-current-value-value="<%= @remaining_macros[:calories] %>" data-inline-goals-unit-value="calories"><span class="value"><%= number_with_delimiter(@remaining_macros[:calories]) %></span> calories</dd>
     </div>
     <div>
       <dt>Protein</dt>
-      <dd><%= @remaining_macros[:protein_g] %> g</dd>
+      <dd data-controller="inline-goals" data-inline-goals-field-value="daily_protein_goal_g" data-inline-goals-current-value-value="<%= current_user.daily_protein_goal_g || '' %>"><span class="value"><%= @remaining_macros[:protein_g] %></span> g</dd>
     </div>
     <div>
       <dt>Fats</dt>
-      <dd><%= @remaining_macros[:fats_g] %> g</dd>
+      <dd data-controller="inline-goals" data-inline-goals-field-value="daily_fats_goal_g" data-inline-goals-current-value-value="<%= current_user.daily_fats_goal_g || '' %>"><span class="value"><%= @remaining_macros[:fats_g] %></span> g</dd>
     </div>
     <div>
       <dt>Carbs</dt>
-      <dd><%= @remaining_macros[:carbs_g] %> g</dd>
+      <dd data-controller="inline-goals" data-inline-goals-field-value="daily_carbs_goal_g" data-inline-goals-current-value-value="<%= current_user.daily_carbs_goal_g || '' %>"><span class="value"><%= @remaining_macros[:carbs_g] %></span> g</dd>
     </div>
   </dl>
   <p class="mt-2">

@@ -24,12 +24,17 @@ class MeasurementParamsNormalizer
     convert_height!
     convert_weight!
     @params.slice!(
+      :username,
       :sex,
       :date_of_birth,
       :height_cm,
       :weight_kg,
       :activity_level,
-      :goal_type
+      :goal_type,
+      :daily_calories_goal,
+      :daily_protein_goal_g,
+      :daily_fats_goal_g,
+      :daily_carbs_goal_g
     )
     @params
   end

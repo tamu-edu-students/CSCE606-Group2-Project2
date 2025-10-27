@@ -31,3 +31,8 @@ end
 
 OmniAuth.config.allowed_request_methods = %i[get post]
 OmniAuth.config.silence_get_warning = true
+
+
+OmniAuth.config.on_failure = Proc.new do |env|
+  SessionsController.action(:failure).call(env)
+end

@@ -33,6 +33,7 @@ class OnboardingController < ApplicationController
 
   def raw_onboarding_params
     params.require(:user).permit(
+      :username,
       :sex,
       :date_of_birth,
       :height_input,
@@ -41,6 +42,10 @@ class OnboardingController < ApplicationController
       :weight_kg,
       :activity_level,
       :goal_type,
+      :daily_calories_goal,
+      :daily_protein_goal_g,
+  :daily_fats_goal_g,
+  :daily_carbs_goal_g,
       :measurement_system
     )
   end
