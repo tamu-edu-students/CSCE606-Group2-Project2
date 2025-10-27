@@ -114,6 +114,29 @@
                       {},
                       required: true %>
     </div>
+
+    <fieldset class="manual-goals">
+      <legend>Optional: Set manual daily goals</legend>
+      <div class="form-field">
+        <%= form.label :daily_calories_goal, "Daily calories goal (optional)" %>
+        <%= form.number_field :daily_calories_goal, value: @user.daily_calories_goal, min: 0, step: 1 %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :daily_protein_goal_g, "Daily protein goal (g) (optional)" %>
+        <%= form.number_field :daily_protein_goal_g, value: @user.daily_protein_goal_g, min: 0, step: 1 %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :daily_fats_goal_g, "Daily fats goal (g) (optional)" %>
+        <%= form.number_field :daily_fats_goal_g, value: @user.daily_fats_goal_g, min: 0, step: 1 %>
+      </div>
+
+      <div class="form-field">
+        <%= form.label :daily_carbs_goal_g, "Daily carbs goal (g) (optional)" %>
+        <%= form.number_field :daily_carbs_goal_g, value: @user.daily_carbs_goal_g, min: 0, step: 1 %>
+      </div>
+    </fieldset>
   </div>
 
   <div class="actions">

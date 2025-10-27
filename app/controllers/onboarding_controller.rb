@@ -42,6 +42,10 @@ class OnboardingController < ApplicationController
       :weight_kg,
       :activity_level,
       :goal_type,
+      :daily_calories_goal,
+      :daily_protein_goal_g,
+  :daily_fats_goal_g,
+  :daily_carbs_goal_g,
       :measurement_system
     )
   end
