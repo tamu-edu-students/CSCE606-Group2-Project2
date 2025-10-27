@@ -25,16 +25,16 @@ class SessionsController < ApplicationController
 
   def failure
   raw = params[:message].to_s
-  raw = request.env['omniauth.error.type'].to_s if raw.blank? && request.env['omniauth.error.type']
-  raw = request.env['omniauth.error'].to_s if raw.blank? && request.env['omniauth.error']
+  raw = request.env["omniauth.error.type"].to_s if raw.blank? && request.env["omniauth.error.type"]
+  raw = request.env["omniauth.error"].to_s if raw.blank? && request.env["omniauth.error"]
     friendly = case raw
-               when /invalid_credentials/i, /access_denied/i
+    when /invalid_credentials/i, /access_denied/i
                  "Authentication was canceled."
-               when /csrf_detected|authenticity_token|invalid_request/i
+    when /csrf_detected|authenticity_token|invalid_request/i
                  "Authentication request could not be verified; please try again."
-               else
+    else
                  "Google sign-in failed."
-               end
+    end
 
     redirect_to root_path, alert: friendly
   end

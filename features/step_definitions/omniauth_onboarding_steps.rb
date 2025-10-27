@@ -29,7 +29,7 @@ When('I start the Google sign in flow') do
 end
 
 Then('I should be on the homepage') do
-  acceptable = [root_path, '/']
+  acceptable = [ root_path, '/' ]
   expect(acceptable).to include(page.current_path)
 end
 
