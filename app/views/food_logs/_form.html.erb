@@ -1,0 +1,57 @@
+<% submit_label ||= "Save entry" %>
+<% cancel_path ||= dashboard_path %>
+<% error_title ||= "We couldn't save this food entry." %>
+
+<% if food_log.errors.any? %>
+  <div class="flash alert">
+    <strong><%= error_title %></strong>
+    <ul>
+      <% food_log.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= form_with model: food_log,
+              multipart: true,
+              local: true do |form| %>
+  <div class="form-field">
+    <%= form.label :food_name, "Food name" %>
+    <%= form.text_field :food_name, required: true %>
+  </div>
+
+  <div class="form-field">
+    <%= form.label :photo, "Photo (optional)" %>
+    <%= form.file_field :photo, accept: "image/*" %>
+    <small class="text-muted">Supported: JPG, PNG. Max 5MB.</small>
+  </div>
+
+  <fieldset class="macro-fieldset">
+    <legend>Macro details</legend>
+    <p class="text-muted">
+      Leave blank to let the AI estimate macros from the photo. You can also override any field.
+    </p>
+    <div class="form-grid">
+      <div class="form-field">
+        <%= form.label :calories, "Calories" %>
+        <%= form.number_field :calories, min: 0, step: 1 %>
+      </div>
+      <div class="form-field">
+        <%= form.label :protein_g, "Protein (g)" %>
+        <%= form.number_field :protein_g, min: 0, step: 1 %>
+      </div>
+      <div class="form-field">
+        <%= form.label :fats_g, "Fats (g)" %>
+        <%= form.number_field :fats_g, min: 0, step: 1 %>
+      </div>
+      <div class="form-field">
+        <%= form.label :carbs_g, "Carbs (g)" %>
+        <%= form.number_field :carbs_g, min: 0, step: 1 %>
+      </div>
+    </div>
+  </fieldset>
+
+  <%= form.submit submit_label, class: "btn btn-primary" %>
+  <%= link_to "Cancel", cancel_path, class: "btn" %>
+<% end %>

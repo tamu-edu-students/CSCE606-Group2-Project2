@@ -1,0 +1,11 @@
+<h1 class="page-title">Edit food entry</h1>
+
+<div class="lead">
+  Adjust the details below to correct this log.
+</div>
+
+<%= render "form",
+           food_log: @food_log,
+           submit_label: "Save changes",
+           cancel_path: dashboard_path,
+           error_title: "We couldn't update this food entry." %>
