@@ -34,8 +34,10 @@
           <td><%= log.fats_g %> g</td>
           <td><%= log.carbs_g %> g</td>
           <td>
-            <%= link_to "Edit", edit_food_log_path(log), class: "btn btn-link" %>
-            <%= button_to "Delete", food_log_path(log), method: :delete, data: { confirm: "Delete this entry?" }, class: "btn btn-link" %>
+            <div class="log-actions">
+              <%= link_to "Edit", edit_food_log_path(log), class: "btn btn-link" %>
+              <%= button_to "Delete", food_log_path(log), method: :delete, data: { confirm: "Delete this entry?" }, class: "btn btn-link" %>
+            </div>
           </td>
         </tr>
       <% end %>

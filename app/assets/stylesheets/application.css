@@ -198,6 +198,16 @@ a:focus {
   gap: 0.35rem;
 }
 
+.log-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.log-actions form {
+  margin: 0;
+}
+
 .form-field input,
 .form-field select,
 .form-field textarea {

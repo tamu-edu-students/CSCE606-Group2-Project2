@@ -33,10 +33,21 @@ class FoodLogsController < ApplicationController
   def edit; end
 
   def update
-    update_attrs = food_log_params.to_h
+    permitted_params = food_log_params
+    update_attrs = permitted_params.to_h
     update_attrs.delete("photo") if update_attrs["photo"].blank?
 
-    if @food_log.update(update_attrs)
+    if should_trigger_analysis?(permitted_params)
+      result = NutritionAnalysis::UpdateLog.new(food_log: @food_log, params: permitted_params).call
+
+      if result.success?
+        redirect_to dashboard_path, success: "Food log updated."
+      else
+        @food_log = result.food_log
+        flash.now[:alert] = result.error_message || "We couldn't update this food entry."
+        render :edit, status: :unprocessable_entity
+      end
+    elsif @food_log.update(update_attrs)
       redirect_to dashboard_path, success: "Food log updated."
     else
       flash.now[:alert] = "We couldn't update this food entry."
@@ -57,5 +68,13 @@ class FoodLogsController < ApplicationController
 
   def food_log_params
     params.require(:food_log).permit(:food_name, :calories, :protein_g, :fats_g, :carbs_g, :photo)
+  end
+
+  def should_trigger_analysis?(params)
+    params[:photo].present? && macro_fields_blank?(params)
+  end
+
+  def macro_fields_blank?(params)
+    %i[calories protein_g fats_g carbs_g].all? { |key| params[key].blank? }
   end
 end
