@@ -38,6 +38,18 @@ RSpec.describe User, type: :model do
       expect(invalid.errors[:height_cm]).to include("must be greater than 0")
       expect(invalid.errors[:weight_kg]).to include("must be greater than 0")
     end
+
+    it "validates uniqueness of email" do
+      existing = described_class.create!(
+        email: "dup@example.com",
+        provider: "google_oauth2",
+        uid: "dup-uid"
+      )
+
+      dup_user = described_class.new(email: existing.email, provider: "google_oauth2", uid: "another-uid")
+      expect(dup_user).not_to be_valid
+      expect(dup_user.errors[:email]).to be_present
+    end
   end
 
   describe ".find_or_create_from_auth_hash" do
@@ -122,6 +134,14 @@ RSpec.describe User, type: :model do
 
       expect(user).to be_survey_completed
       expect(user.daily_calories_goal).to be_positive
+    end
+  end
+
+  describe "associations" do
+    it "has many food_logs" do
+      assoc = described_class.reflect_on_association(:food_logs)
+      expect(assoc).not_to be_nil
+      expect(assoc.macro).to eq(:has_many)
     end
   end
 end

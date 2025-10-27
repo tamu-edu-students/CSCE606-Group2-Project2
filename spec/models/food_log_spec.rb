@@ -42,4 +42,12 @@ RSpec.describe FoodLog, type: :model do
       expect(log.macros).to eq({ calories: 120, protein_g: 8, fats_g: 5, carbs_g: 12 })
     end
   end
+
+  describe "associations" do
+    it "belongs to a user" do
+      assoc = described_class.reflect_on_association(:user)
+      expect(assoc).not_to be_nil
+      expect(assoc.macro).to eq(:belongs_to)
+    end
+  end
 end
