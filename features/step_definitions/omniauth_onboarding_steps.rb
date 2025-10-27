@@ -76,7 +76,8 @@ end
 When('I submit valid profile information') do
   # Fill the form using the exact field names used by the onboarding view
   begin
-    # Measurement system is a hidden field: we can leave default or set metric explicitly
+
+  fill_in 'user[username]', with: 'cuke_user' rescue fill_in 'user_username', with: 'cuke_user' rescue nil
     # Fill required fields that the controller permits/validates
     select 'Female', from: 'Sex' rescue select 'female', from: 'user[sex]' rescue nil
     fill_in 'Date of birth', with: '1990-01-01' rescue fill_in 'user[date_of_birth]', with: '1990-01-01' rescue nil

@@ -33,6 +33,12 @@
 
   <div class="form-grid">
     <div class="form-field">
+      <%= form.label :username, "Username" %>
+      <%= form.text_field :username, required: true, autofocus: true %>
+      <small class="text-muted"></small>
+    </div>
+
+    <div class="form-field">
       <%= form.label :sex, "Sex" %>
       <%= form.select :sex,
                       options_for_select([["Female", "female"], ["Male", "male"]], @user.sex),

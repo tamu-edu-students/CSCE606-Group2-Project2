@@ -33,6 +33,7 @@ class OnboardingController < ApplicationController
 
   def raw_onboarding_params
     params.require(:user).permit(
+      :username,
       :sex,
       :date_of_birth,
       :height_input,

@@ -11,8 +11,9 @@ class SessionsController < ApplicationController
     @current_user = User.find_or_create_from_auth_hash(symbolized_auth(auth))
     session[:user_id] = current_user.id
 
-    path = current_user.survey_completed? ? dashboard_path : new_onboarding_path
-    redirect_to path, success: "Welcome back, #{current_user.email}!"
+  path = current_user.survey_completed? ? dashboard_path : new_onboarding_path
+  display_name = current_user.username.presence || current_user.email
+  redirect_to path, success: "Welcome back, #{display_name}!"
   rescue StandardError => e
     Rails.logger.error("OAuth login failed: #{e.message}")
     redirect_to root_path, alert: "We could not sign you in. Please try again."
