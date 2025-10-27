@@ -51,6 +51,53 @@ RSpec.describe "FoodLogs", type: :request do
     end
   end
 
+  describe "GET /food_logs/:id/edit" do
+    it "requires login" do
+      entry = user.food_logs.create!(food_name: "Apple", calories: 100, protein_g: 0, fats_g: 0, carbs_g: 25)
+
+      get edit_food_log_path(entry)
+      expect(response).to redirect_to(root_path)
+    end
+
+    it "renders the edit form with existing values" do
+      entry = user.food_logs.create!(food_name: "Apple", calories: 100, protein_g: 0, fats_g: 0, carbs_g: 25)
+
+      sign_in_via_omniauth(user)
+      get edit_food_log_path(entry)
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("Edit food entry")
+      expect(response.body).to include('value="Apple"')
+      expect(response.body).to include('value="100"')
+    end
+  end
+
+  describe "PATCH /food_logs/:id" do
+    it "updates a log and redirects to the dashboard" do
+      entry = user.food_logs.create!(food_name: "Apple", calories: 100, protein_g: 1, fats_g: 0, carbs_g: 25)
+
+      sign_in_via_omniauth(user)
+      patch food_log_path(entry),
+            params: { food_log: { calories: 150, food_name: "Green Apple", protein_g: 1, fats_g: 0, carbs_g: 25 } }
+
+      expect(response).to redirect_to(dashboard_path)
+      expect(entry.reload.calories).to eq(150)
+      expect(entry.food_name).to eq("Green Apple")
+    end
+
+    it "renders errors when validation fails" do
+      entry = user.food_logs.create!(food_name: "Apple", calories: 100, protein_g: 1, fats_g: 0, carbs_g: 25)
+
+      sign_in_via_omniauth(user)
+      patch food_log_path(entry),
+            params: { food_log: { food_name: "", calories: 90, protein_g: 1, fats_g: 0, carbs_g: 25 } }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response.body).to include("We couldn&#39;t update this food entry.")
+      expect(entry.reload.food_name).to eq("Apple")
+    end
+  end
+
   describe "DELETE /food_logs/:id" do
     it "removes a log" do
       entry = user.food_logs.create!(food_name: "Coffee", calories: 5, protein_g: 0, fats_g: 0, carbs_g: 1)

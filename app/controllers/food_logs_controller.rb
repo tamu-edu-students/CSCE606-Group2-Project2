@@ -1,6 +1,6 @@
 class FoodLogsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_food_log, only: :destroy
+  before_action :set_food_log, only: %i[edit update destroy]
 
   def index
     @food_logs = current_user.food_logs.with_attached_photo.order(created_at: :desc)
@@ -27,6 +27,20 @@ class FoodLogsController < ApplicationController
       @food_log = result.food_log
       flash.now[:alert] = result.error_message || "We could not analyze that item. Please try again."
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit; end
+
+  def update
+    update_attrs = food_log_params.to_h
+    update_attrs.delete("photo") if update_attrs["photo"].blank?
+
+    if @food_log.update(update_attrs)
+      redirect_to dashboard_path, success: "Food log updated."
+    else
+      flash.now[:alert] = "We couldn't update this food entry."
+      render :edit, status: :unprocessable_entity
     end
   end
 
