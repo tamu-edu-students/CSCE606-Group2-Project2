@@ -42,7 +42,14 @@ class User < ApplicationRecord
   def complete_survey!(attributes)
     assign_attributes(attributes)
     self.survey_completed = true
-    calculate_goals!
+
+  manual_goals = attributes.slice(:daily_calories_goal, :daily_protein_goal_g, :daily_fats_goal_g, :daily_carbs_goal_g)
+    if manual_goals.values.any?(&:present?)
+      # If the user provided manual goals, keep those and skip automatic calculation
+      save!
+    else
+      calculate_goals!
+    end
   end
 
   def calculate_goals!
