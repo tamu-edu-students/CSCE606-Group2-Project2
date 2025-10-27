@@ -24,6 +24,7 @@ class MeasurementParamsNormalizer
     convert_height!
     convert_weight!
     @params.slice!(
+      :username,
       :sex,
       :date_of_birth,
       :height_cm,

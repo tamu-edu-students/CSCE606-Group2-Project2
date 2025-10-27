@@ -19,6 +19,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validates :provider, presence: true
   validates :uid, presence: true
+  validates :username, uniqueness: { case_sensitive: false }, allow_blank: true
   validates :height_cm, numericality: { greater_than: 0 }, allow_nil: true
   validates :weight_kg, numericality: { greater_than: 0 }, allow_nil: true
   validates :daily_calories_goal,
