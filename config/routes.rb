@@ -12,4 +12,6 @@ Rails.application.routes.draw do
   resource :dashboard, only: :show
   resource :onboarding, only: %i[new create], controller: :onboarding
   resources :food_logs, only: %i[index new create destroy]
+  # Profile inline goal updates (current_user)
+  patch "/profile/goals", to: "profiles#update_goals"
 end
