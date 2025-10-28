@@ -14,7 +14,7 @@ When('I fill in the new food form with name {string} and calories {int}') do |na
   require 'tempfile'
   require 'base64'
   png_base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII='
-  tmp = Tempfile.new(['cuke', '.png'])
+  tmp = Tempfile.new([ 'cuke', '.png' ])
   tmp.binmode
   tmp.write(Base64.decode64(png_base64))
   tmp.rewind
