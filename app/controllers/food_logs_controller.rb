@@ -3,7 +3,17 @@ class FoodLogsController < ApplicationController
   before_action :set_food_log, only: %i[edit update destroy]
 
   def index
-    @food_logs = current_user.food_logs.with_attached_photo.order(created_at: :desc)
+    @sort = safe_sort_param(params[:sort])
+    @direction = params[:direction] == "asc" ? "asc" : "desc"
+
+    logs = current_user.food_logs.with_attached_photo
+    if @sort == "date"
+      logs = logs.order(created_at: (@direction == "asc" ? :asc : :desc))
+    else
+      logs = logs.order(created_at: :desc)
+    end
+
+    @grouped_logs = logs.group_by { |l| l.created_at.to_date }
   end
 
   def new
@@ -76,5 +86,9 @@ class FoodLogsController < ApplicationController
 
   def macro_fields_blank?(params)
     %i[calories protein_g fats_g carbs_g].all? { |key| params[key].blank? }
+  end
+
+  def safe_sort_param(value)
+    %w[date calories protein_g fats_g carbs_g].include?(value) ? value : "date"
   end
 end

@@ -1,4 +1,15 @@
 Given('I am signed in') do
+  # Ensure OmniAuth is in test mode with a mock user
+  if defined?(OmniAuth)
+    OmniAuth.config.test_mode = true
+    OmniAuth.config.mock_auth[:google_oauth2] ||= OmniAuth::AuthHash.new(
+      provider: 'google_oauth2',
+      uid: '123545',
+      info: { email: 'cuke.user@example.com', name: 'Cuke User' },
+      credentials: { token: 'mock_token', refresh_token: 'mock_refresh' }
+    )
+  end
+
   visit '/auth/google_oauth2'
   sleep 0.1
 
