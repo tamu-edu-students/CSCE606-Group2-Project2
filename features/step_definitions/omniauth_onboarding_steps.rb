@@ -24,8 +24,6 @@ Given('OmniAuth will fail with {word}') do |failure|
 end
 
 When('I start the Google sign in flow') do
-  # Trigger the OmniAuth flow but be defensive: some drivers/middleware
-  # may raise or log an auth failure before Capybara can follow redirects.
   begin
     visit '/auth/google_oauth2'
   rescue StandardError => e
@@ -33,21 +31,24 @@ When('I start the Google sign in flow') do
     # continue to normalization below
   end
 
-  # Give middleware/Capybara a moment to process redirects
-  sleep 0.1
-
+  # Wait for middleware/app redirects to settle (use Capybara sync)
   begin
-    current = page.current_path.to_s
-    if current == '/auth/failure' || current.start_with?('/auth/failure')
-      begin
-        visit root_path
-      rescue StandardError
-        visit '/'
-      end
+    Capybara.using_wait_time(5) do
+      # Accept either an OmniAuth failure path, the app root, or the dashboard
+      expect(page).to have_current_path(%r{^/auth/failure|^/$|/dashboard}, wait: 5)
     end
   rescue StandardError => e
-    # If reading current_path fails, attempt to recover by navigating to root
-    warn "Error while normalizing OmniAuth failure redirect in test: #{e.class}: #{e.message}"
+    warn "Timeout or navigation issue waiting for OmniAuth redirect: #{e.class}: #{e.message}"
+  end
+
+  # If we landed on the OmniAuth failure endpoint, forward into the app's root/failure handling
+  begin
+    current = page.current_path.to_s rescue ''
+    if current.start_with?('/auth/failure')
+      visit root_path rescue visit '/'
+    end
+  rescue StandardError => e
+    warn "Error normalizing OmniAuth failure redirect in test: #{e.class}: #{e.message}"
     begin
       visit root_path
     rescue StandardError
