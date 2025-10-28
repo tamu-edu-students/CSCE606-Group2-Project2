@@ -24,23 +24,20 @@ Given('OmniAuth will fail with {word}') do |failure|
 end
 
 When('I start the Google sign in flow') do
-  # Try to trigger the OmniAuth flow, but be defensive: some test runs
-  # raise or log an error before a stable redirect is observable.
+  # Trigger the OmniAuth flow but be defensive: some drivers/middleware
+  # may raise or log an auth failure before Capybara can follow redirects.
   begin
     visit '/auth/google_oauth2'
   rescue StandardError => e
-    warn "OmniAuth visit raised #{e.class}: #{e.message}; attempting to normalize to failure path"
-    # fall through to normalization below
+    warn "OmniAuth visit raised #{e.class}: #{e.message}; will normalize to failure path"
+    # continue to normalization below
   end
 
-  # allow the middleware to process and follow redirects
+  # Give middleware/Capybara a moment to process redirects
   sleep 0.1
 
   begin
     current = page.current_path.to_s
-    # If the app redirected to auth failure (or the failure path is returned
-    # as part of the error), normalize to visiting the homepage so tests that
-    # expect root_path still pass.
     if current == '/auth/failure' || current.start_with?('/auth/failure')
       begin
         visit root_path
@@ -49,8 +46,7 @@ When('I start the Google sign in flow') do
       end
     end
   rescue StandardError => e
-    # If querying current_path fails (some drivers may raise), attempt to
-    # recover by navigating to the homepage and log a warning.
+    # If reading current_path fails, attempt to recover by navigating to root
     warn "Error while normalizing OmniAuth failure redirect in test: #{e.class}: #{e.message}"
     begin
       visit root_path
