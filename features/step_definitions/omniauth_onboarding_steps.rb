@@ -47,10 +47,11 @@ When('I start the Google sign in flow') do
   end
 end
 
-Then('I should be on the homepage') do
-  acceptable = [ root_path, '/' ]
-  expect(acceptable).to include(page.current_path)
-end
+## NOTE: 'I should be on the homepage' step is defined in
+## `features/step_definitions/session_profile_steps.rb` to avoid
+## ambiguous step definitions across multiple feature files. Use the
+## implementation there which is slightly more permissive (accepts
+## root_path or dashboard indicators).
 
 When('I sign in with Google') do
   # Trigger the OmniAuth test callback via the standard entry point.
