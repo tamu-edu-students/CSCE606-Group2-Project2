@@ -2,10 +2,18 @@
 
 <section class="summary-card">
   <h2>Today's goals</h2>
+  <% calories_left = @calories_balance %>
+  <% calories_status_class = calories_left <= 0 ? "value--negative" : "value--positive" %>
   <dl class="macro-summary">
     <div>
       <dt>Calories left</dt>
-      <dd data-controller="inline-goals" data-inline-goals-field-value="calories_left" data-inline-goals-current-value-value="<%= @remaining_macros[:calories] %>" data-inline-goals-unit-value="calories"><span class="value"><%= number_with_delimiter(@remaining_macros[:calories]) %></span> calories</dd>
+      <dd class="calories-left"
+          data-controller="inline-goals"
+          data-inline-goals-field-value="calories_left"
+          data-inline-goals-current-value-value="<%= calories_left %>"
+          data-inline-goals-unit-value="calories">
+        <span class="value <%= calories_status_class %>"><%= number_with_delimiter(calories_left) %></span> calories
+      </dd>
     </div>
     <div>
       <dt>Protein</dt>
@@ -20,6 +28,9 @@
       <dd data-controller="inline-goals" data-inline-goals-field-value="daily_carbs_goal_g" data-inline-goals-current-value-value="<%= current_user.daily_carbs_goal_g || '' %>"><span class="value"><%= @remaining_macros[:carbs_g] %></span> g</dd>
     </div>
   </dl>
+  <% if calories_left <= 0 %>
+    <p class="calories-over-message" role="status">Calories Over</p>
+  <% end %>
   <p class="mt-2">
     Need to adjust your targets? <%= link_to "Retake the survey", new_onboarding_path %>.
   </p>

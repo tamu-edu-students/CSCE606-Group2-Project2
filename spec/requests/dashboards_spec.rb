@@ -37,4 +37,22 @@ RSpec.describe "Dashboards", type: :request do
     expect(response.body).to include("Today's goals")
     expect(response.body).to include("Calories left")
   end
+
+  it "shows the calories left indicator in a positive state when under the goal" do
+    sign_in_via_omniauth(user)
+    get dashboard_path
+
+    expect(response.body).to include("value--positive")
+    expect(response.body).not_to include("Calories Over")
+  end
+
+  it "shows a warning message when the user is over their calorie limit" do
+    user.food_logs.create!(food_name: "Dinner", calories: 2_200, protein_g: 80, fats_g: 60, carbs_g: 200)
+
+    sign_in_via_omniauth(user)
+    get dashboard_path
+
+    expect(response.body).to include("value--negative")
+    expect(response.body).to include("Calories Over")
+  end
 end
