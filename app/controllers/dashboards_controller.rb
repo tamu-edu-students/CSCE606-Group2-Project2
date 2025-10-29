@@ -4,6 +4,7 @@ class DashboardsController < ApplicationController
 
   def show
     @remaining_macros = current_user.remaining_macros_for_today
+    @calories_balance = current_user.calories_balance_for_today
     @todays_logs = current_user.todays_food_logs
   end
 

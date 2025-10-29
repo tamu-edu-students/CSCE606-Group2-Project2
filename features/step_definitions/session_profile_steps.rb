@@ -48,7 +48,12 @@ When('I click the {string} button') do |button_text|
 end
 
 Then('I should be on the homepage') do
-  expect(page).to have_current_path(root_path).or have_content(/Calorie Counter/i)
+  ok = (page.respond_to?(:has_current_path?) && page.has_current_path?(root_path)) || page.has_content?(/Calorie Counter/i)
+  unless ok
+    warn "[CUKE DEBUG] current_path=#{page.current_path}"
+    warn page.body[0..1200]
+  end
+  expect(ok).to be true
 end
 
 

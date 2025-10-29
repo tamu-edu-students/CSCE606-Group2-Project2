@@ -104,6 +104,40 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe "#calories_balance_for_today" do
+    before do
+      user.update!(daily_calories_goal: 2_000)
+    end
+
+    it "returns positive balance when under the limit" do
+      user.food_logs.create!(food_name: "Salad", calories: 500, protein_g: 10, fats_g: 5, carbs_g: 10)
+
+      expect(user.calories_balance_for_today).to eq(1_500)
+    end
+
+    it "returns zero or negative when over the limit" do
+      user.food_logs.create!(food_name: "Snack", calories: 2_100, protein_g: 10, fats_g: 5, carbs_g: 10)
+
+      expect(user.calories_balance_for_today).to eq(-100)
+    end
+  end
+
+  describe "#over_calorie_limit?" do
+    before do
+      user.update!(daily_calories_goal: 1_800)
+    end
+
+    it "is false when under the goal" do
+      expect(user.over_calorie_limit?).to be(false)
+    end
+
+    it "is true when the user has no calories remaining" do
+      user.food_logs.create!(food_name: "Buffet", calories: 1_900, protein_g: 20, fats_g: 10, carbs_g: 30)
+
+      expect(user.over_calorie_limit?).to be(true)
+    end
+  end
+
   describe "#todays_food_logs" do
     it "returns only entries from the current day" do
       today_log = user.food_logs.create!(food_name: "Salad", calories: 300, protein_g: 10, fats_g: 5, carbs_g: 20)

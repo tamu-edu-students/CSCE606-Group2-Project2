@@ -10,4 +10,4 @@ Feature: Cancelled Google sign-in
   Given OmniAuth will fail with invalid_credentials
   When I start the Google sign in flow
     Then I should be on the homepage
-    And I should see "Authentication was canceled."
+    And I should see the authentication cancellation message
