@@ -491,6 +491,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rails (~> 8.1.0)
   rspec-rails
+  rubocop (~> 1.81)
   rubocop-rails-omakase
   ruby-openai (~> 8.3)
   selenium-webdriver

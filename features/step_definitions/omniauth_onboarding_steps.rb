@@ -176,7 +176,6 @@ end
 # the test suite). This makes the CI scenario tolerant of the app's current
 # behavior while still asserting the user ends up back at the root.
 Then('I should see the authentication cancellation message') do
-
   message = 'Authentication was canceled.'
   if page.has_content?(message)
     true
