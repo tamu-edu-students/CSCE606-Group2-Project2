@@ -69,6 +69,14 @@ class User < ApplicationRecord
     }
   end
 
+  def calories_balance_for_today
+    daily_calories_goal.to_i - todays_logs_macros[:calories]
+  end
+
+  def over_calorie_limit?
+    calories_balance_for_today <= 0
+  end
+
   def todays_food_logs
     food_logs.with_attached_photo.where(created_at: Time.zone.today.all_day)
   end

@@ -7,6 +7,8 @@
   --surface-dark: #111827;
   --text: #1f2933;
   --text-muted: #6b7280;
+  --success: #15803d;
+  --danger: #b91c1c;
   --border: #d1d5db;
   --border-dark: #1f2937;
 }
@@ -132,6 +134,20 @@ a:focus {
 .macro-summary dd {
   margin: 0.25rem 0 0;
   font-size: 1.4rem;
+}
+
+.value--positive {
+  color: var(--success);
+}
+
+.value--negative {
+  color: var(--danger);
+}
+
+.calories-over-message {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  color: var(--danger);
 }
 
 .actions {

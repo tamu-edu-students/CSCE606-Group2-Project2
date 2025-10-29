@@ -75,8 +75,8 @@ export default class extends Controller {
       })
       .then((json) => {
         const displayed = (json.user && (json.user[this.fieldValue] ?? json.user.calories_left)) ?? val
-        const suffix = this.unitValue === 'calories' ? ' calories' : ' g'
-        this.element.innerHTML = `<span class="value">${displayed}</span>${suffix}`
+        this.currentValueValue = displayed
+        this.renderDisplay(displayed)
       })
       .catch(async (err) => {
         console.error('Failed to update goal', err)
@@ -88,13 +88,29 @@ export default class extends Controller {
 
   restoreDisplay() {
     const current = this.currentValueValue || ''
-    const suffix = this.unitValue === 'calories' ? ' calories' : ' g'
-    this.element.innerHTML = `<span class="value">${current}</span>${suffix}`
+    this.renderDisplay(current)
   }
 
   clearInput() {
     if (this.input) {
       this.input = null
     }
+  }
+
+  renderDisplay(value) {
+    const suffix = this.unitValue === 'calories' ? ' calories' : ' g'
+    const className = this.valueClassFor(value)
+    const classFragment = className ? ` ${className}` : ''
+    const text = value == null ? '' : value
+    this.element.innerHTML = `<span class="value${classFragment}">${text}</span>${suffix}`
+  }
+
+  valueClassFor(value) {
+    if (this.fieldValue !== 'calories_left') return ''
+
+    const numeric = Number(value)
+    if (Number.isNaN(numeric)) return ''
+
+    return numeric <= 0 ? 'value--negative' : 'value--positive'
   }
 }
