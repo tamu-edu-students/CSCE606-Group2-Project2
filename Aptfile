@@ -1,4 +1,5 @@
+# libvips provides fast image processing; include the dev package and helper tools
 libvips-dev
-vips-tools
+libvips-tools
 # imagemagick (optional alternative)
 # imagemagick
