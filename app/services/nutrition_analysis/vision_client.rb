@@ -176,12 +176,14 @@ module NutritionAnalysis
 
     def convert_to_integer(value)
       return nil if value.nil?
-
       Integer(value)
     rescue ArgumentError, TypeError
-      Float(value).round
-    rescue ArgumentError, TypeError
-      nil
+      # Try parsing as a float and round. If that also fails, return nil.
+      begin
+        Float(value).round
+      rescue ArgumentError, TypeError
+        nil
+      end
     end
   end
 end
