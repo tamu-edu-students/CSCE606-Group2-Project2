@@ -80,7 +80,7 @@ RSpec.describe NutritionAnalysis::CreateLog do
 
       # Force any created FoodLog save to fail and provide error messages
       allow_any_instance_of(FoodLog).to receive(:save).and_return(false)
-      allow_any_instance_of(FoodLog).to receive_message_chain(:errors, :full_messages).and_return(["DB write failed"])
+      allow_any_instance_of(FoodLog).to receive_message_chain(:errors, :full_messages).and_return([ "DB write failed" ])
 
       result = described_class.new(
         user:,

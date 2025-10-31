@@ -20,7 +20,7 @@ RSpec.describe ProfilesController, type: :controller do
 
     it 'returns errors when update fails' do
       allow_any_instance_of(User).to receive(:update).and_return(false)
-      allow_any_instance_of(User).to receive_message_chain(:errors, :full_messages).and_return(['bad'])
+      allow_any_instance_of(User).to receive_message_chain(:errors, :full_messages).and_return([ 'bad' ])
       patch :update_goals, params: { calories_left: 100 }
       expect(response).to have_http_status(:unprocessable_entity)
       json = JSON.parse(response.body)
