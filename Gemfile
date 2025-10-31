@@ -1,3 +1,6 @@
+# Declare Ruby runtime to keep CI/Heroku in sync with local environment
+ruby "3.4.5"
+
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -80,3 +83,4 @@ group :test do
 end
 
 gem "rubocop", "~> 1.81", require: false
+gem "image_processing", "~> 1.2"
