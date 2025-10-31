@@ -17,7 +17,7 @@ coverage_dirs = resultset_paths.map { |p| File.dirname(p) }.uniq
 puts "Merging coverage results from: #{coverage_dirs.join(', ')}"
 
 # Collate the coverage results. This will produce coverage reports in the default coverage directory.
-SimpleCov.collate(coverage_dirs, 'Merged Coverage') do
+SimpleCov.collate(coverage_dirs) do
   # Use default HTML formatter (SimpleCov::Formatter::HTMLFormatter)
   SimpleCov.formatter = SimpleCov::Formatter::HTMLFormatter
   coverage_dir 'coverage'
