@@ -55,34 +55,74 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Install OS packages needed for system tests
+        run: |
+          sudo apt-get update
+          # chrome for system/browser tests, libvips for ActiveStorage variants, sqlite3 for test DB
+          sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips sqlite3
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: .ruby-version
           bundler-cache: true
-          
+
       - name: Prepare test database
         env:
           RAILS_ENV: test
         run: bin/rails db:prepare
 
-      - name: Run RSpec & Cucumber (enforce merged coverage)
+      - name: Run RSpec
         env:
           RAILS_ENV: test
-          SIMPLECOV_MINIMUM: '0'
-        run: |
-          bin/rails spec
-          bin/rails cucumber
-          
-      - name: Upload Coverage Report
-        # This step runs even if tests fail, but only if coverage was generated
-        if: always()
-        uses: actions/upload-artifact@v5
+        run: bundle exec rspec --format progress
+
+      - name: Run Cucumber
+        env:
+          RAILS_ENV: test
+        run: bundle exec cucumber --tags "not @wip" --format progress
+
+      - name: Merge Coverage Reports
+        env:
+          RAILS_ENV: test
+        run: bundle exec ruby bin/coverage_merge
+
+      - name: Upload screenshots (RSpec/Cucumber failures)
+        uses: actions/upload-artifact@v4
+        if: failure()
         with:
-          name: rspec-cucumber-coverage-report
-          path: coverage/
+          name: screenshots
+          path: |
+            ${{ github.workspace }}/tmp/screenshots
+            ${{ github.workspace }}/tmp/capybara
+          if-no-files-found: ignore
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: [scan_ruby, scan_js, lint, test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.14.15
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: false
