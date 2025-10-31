@@ -239,4 +239,19 @@ RSpec.describe NutritionAnalysis::VisionClient do
     expect(result).not_to be_success
     expect(result.error_message).to match(/Something went wrong/i)
   end
+
+  it "builds an OpenAI::Client when OPENAI_API_KEY is present" do
+    original = ENV["OPENAI_API_KEY"]
+    ENV["OPENAI_API_KEY"] = "test-key-123"
+    begin
+      fake_client = double("OpenAI::Client")
+      expect(OpenAI::Client).to receive(:new).with(access_token: "test-key-123").and_return(fake_client)
+
+      vc = described_class.new
+      # private reader - access to verify the client was set
+      expect(vc.send(:openai_client)).to eq(fake_client)
+    ensure
+      ENV["OPENAI_API_KEY"] = original
+    end
+  end
 end
