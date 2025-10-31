@@ -2,6 +2,7 @@ class User < ApplicationRecord
   has_many :food_logs, dependent: :destroy
 
   before_validation :normalize_email_and_sex
+  after_save :recalculate_goals_if_needed
 
   enum :activity_level,
        {
@@ -40,13 +41,13 @@ class User < ApplicationRecord
     user
   end
 
+
   def complete_survey!(attributes)
     assign_attributes(attributes)
     self.survey_completed = true
 
   manual_goals = attributes.slice(:daily_calories_goal, :daily_protein_goal_g, :daily_fats_goal_g, :daily_carbs_goal_g)
     if manual_goals.values.any?(&:present?)
-      # If the user provided manual goals, keep those and skip automatic calculation
       save!
     else
       calculate_goals!
@@ -56,7 +57,17 @@ class User < ApplicationRecord
   def calculate_goals!
     return save! unless ready_for_goal_calculation?
 
-    update!(build_daily_goals)
+    goals = build_daily_goals
+
+    validate_calculated_goals!(goals)
+    update!(goals)
+  end
+
+    def needs_goal_recalculation?
+    return false unless survey_completed?
+
+    changes_affecting_goals = %w[weight_kg height_cm date_of_birth sex activity_level goal_type]
+    (saved_changes.keys & changes_affecting_goals).any?
   end
 
   def remaining_macros_for_today
@@ -81,10 +92,80 @@ class User < ApplicationRecord
     food_logs.with_attached_photo.where(created_at: Time.zone.today.all_day)
   end
 
+  def calculation_breakdown
+    return {} unless ready_for_goal_calculation?
+
+    bmr = basal_metabolic_rate
+    tdee = total_daily_energy_expenditure
+    adjustment = goal_adjustment
+
+    {
+      age: age_in_years,
+      bmr: bmr.round,
+      activity_level: activity_level,
+      activity_multiplier: activity_multiplier,
+      tdee: tdee.round,
+      goal_type: goal_type,
+      goal_adjustment: adjustment,
+      final_calories: (tdee + adjustment).clamp(1_200, 4_000).round,
+      protein_multiplier: { "lose" => 2.0, "maintain" => 1.8, "gain" => 2.2 }.fetch(goal_type, 1.8),
+      calculated_at: Time.zone.now
+    }
+  end
+
+    def goals_comparison
+    return {} unless ready_for_goal_calculation?
+
+    fresh_goals = build_daily_goals
+
+    {
+      calories: {
+        current: daily_calories_goal,
+        calculated: fresh_goals[:daily_calories_goal],
+        difference: fresh_goals[:daily_calories_goal].to_i - daily_calories_goal.to_i
+      },
+      protein: {
+        current: daily_protein_goal_g,
+        calculated: fresh_goals[:daily_protein_goal_g],
+        difference: fresh_goals[:daily_protein_goal_g].to_i - daily_protein_goal_g.to_i
+      },
+      fats: {
+        current: daily_fats_goal_g,
+        calculated: fresh_goals[:daily_fats_goal_g],
+        difference: fresh_goals[:daily_fats_goal_g].to_i - daily_fats_goal_g.to_i
+      },
+      carbs: {
+        current: daily_carbs_goal_g,
+        calculated: fresh_goals[:daily_carbs_goal_g],
+        difference: fresh_goals[:daily_carbs_goal_g].to_i - daily_carbs_goal_g.to_i
+      }
+    }
+  end
+
   private
 
   def ready_for_goal_calculation?
     weight_kg.present? && height_cm.present? && date_of_birth.present? && sex.present?
+  end
+
+  def validate_calculated_goals!(goals)
+    if goals[:daily_calories_goal] < 1_200 || goals[:daily_calories_goal] > 4_000
+      Rails.logger.warn "Calculated calories (#{goals[:daily_calories_goal]}) outside safe range"
+    end
+
+    if goals[:daily_protein_goal_g] < 50 || goals[:daily_protein_goal_g] > 400
+      Rails.logger.warn "Calculated protein (#{goals[:daily_protein_goal_g]}g) outside typical range"
+    end
+
+    if goals[:daily_fats_goal_g] < 20 || goals[:daily_fats_goal_g] > 200
+      Rails.logger.warn "Calculated fats (#{goals[:daily_fats_goal_g]}g) outside typical range"
+    end
+
+    if goals[:daily_carbs_goal_g] < 50 || goals[:daily_carbs_goal_g] > 600
+      Rails.logger.warn "Calculated carbs (#{goals[:daily_carbs_goal_g]}g) outside typical range"
+    end
+
+    true
   end
 
   def age_in_years
@@ -94,8 +175,11 @@ class User < ApplicationRecord
     age = now.year - date_of_birth.year
     had_birthday = (now.month > date_of_birth.month) ||
                    (now.month == date_of_birth.month && now.day >= date_of_birth.day)
-    had_birthday ? age : age - 1
+    calculated_age = had_birthday ? age : age - 1
+
+    calculated_age.clamp(18, 100)
   end
+
 
   def activity_multiplier
     {
@@ -115,15 +199,22 @@ class User < ApplicationRecord
     end
   end
 
-  def calculated_daily_calories
-    bmr =
-      if sex == "male"
-        10 * weight_kg + 6.25 * height_cm - 5 * age_in_years + 5
-      else
-        10 * weight_kg + 6.25 * height_cm - 5 * age_in_years - 161
-      end
+  def basal_metabolic_rate
+    return 0 unless ready_for_goal_calculation?
 
-    ((bmr * activity_multiplier) + goal_adjustment).clamp(1_200, 4_000).round
+    if sex == "male"
+      10 * weight_kg + 6.25 * height_cm - 5 * age_in_years + 5
+    else
+      10 * weight_kg + 6.25 * height_cm - 5 * age_in_years - 161
+    end
+  end
+
+  def total_daily_energy_expenditure
+    basal_metabolic_rate * activity_multiplier
+  end
+
+  def calculated_daily_calories
+    (total_daily_energy_expenditure + goal_adjustment).clamp(1_200, 4_000).round
   end
 
   def calculated_daily_protein
@@ -146,12 +237,18 @@ class User < ApplicationRecord
     calories = calculated_daily_calories
     protein = calculated_daily_protein
     fats = calculated_daily_fats
+    carbs = calculated_daily_carbs(calories:, protein:, fats:)
+
+    Rails.logger.info "Calculated nutrition goals for user #{id}: " \
+                      "Calories=#{calories}, Protein=#{protein}g, Fats=#{fats}g, Carbs=#{carbs}g " \
+                      "(Age=#{age_in_years}, Weight=#{weight_kg}kg, Height=#{height_cm}cm, " \
+                      "Activity=#{activity_level}, Goal=#{goal_type})"
 
     {
       daily_calories_goal: calories,
       daily_protein_goal_g: protein,
       daily_fats_goal_g: fats,
-      daily_carbs_goal_g: calculated_daily_carbs(calories:, protein:, fats:)
+      daily_carbs_goal_g: carbs
     }
   end
 
@@ -167,5 +264,12 @@ class User < ApplicationRecord
   def normalize_email_and_sex
     self.email = email&.downcase
     self.sex = sex&.downcase if sex.present?
+  end
+
+  def recalculate_goals_if_needed
+    return unless needs_goal_recalculation?
+
+    Rails.logger.info "Auto-recalculating goals for user #{id} due to profile changes"
+    calculate_goals!
   end
 end
