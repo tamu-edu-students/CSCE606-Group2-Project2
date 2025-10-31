@@ -51,7 +51,11 @@ Rails.application.configure do
 
   # Replace the default in-process and non-durable queuing backend for Active Job.
   config.active_job.queue_adapter = :solid_queue
-  config.solid_queue.connects_to = { database: { writing: :queue } }
+  # Use the primary/production database for the solid_queue backend in production.
+  # The default configuration referenced a separate `queue` database which isn't
+  # defined in config/database.yml on Heroku. Pointing this to `primary` makes
+  # the queue backend use the main DATABASE_URL.
+  config.solid_queue.connects_to = { database: { writing: :primary } }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
