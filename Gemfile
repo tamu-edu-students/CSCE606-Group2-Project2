@@ -1,7 +1,7 @@
-source "https://rubygems.org"
+# Declare Ruby runtime to keep CI/Heroku in sync with local environment
+ruby "3.4.5"
 
-# Declare the Ruby runtime used in CI/Heroku so builds are deterministic.
-ruby "3.3.9"
+source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.1"
