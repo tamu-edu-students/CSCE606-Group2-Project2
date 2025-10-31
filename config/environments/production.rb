@@ -24,6 +24,11 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
+  # Use libvips (via the image_processing gem) for Active Storage variants in
+  # production. This makes variant generation deterministic and avoids the
+  # runtime warning if the processor is present.
+  config.active_storage.variant_processor = :vips
+
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   config.assume_ssl = true
 

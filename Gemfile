@@ -1,5 +1,8 @@
 source "https://rubygems.org"
 
+# Declare the Ruby runtime used in CI/Heroku so builds are deterministic.
+ruby "3.3.9"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.1.1"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
@@ -80,3 +83,4 @@ group :test do
 end
 
 gem "rubocop", "~> 1.81", require: false
+gem "image_processing", "~> 1.2"
