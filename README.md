@@ -78,4 +78,4 @@ Forms use standard HTML controls (`button_to`, `form_with` with `local: true`) s
 - Image attachments use Active Storage's disk service locally (`storage/`). Clean up with `bin/rails active_storage:install` migrations already provided.
 - To exercise the AI flow locally, set `OPENAI_API_KEY` and restart the server. Otherwise, manual macro entry remains available.
 
-Heroku Deployment
+Heroku Deployment, Added edge case test cases
