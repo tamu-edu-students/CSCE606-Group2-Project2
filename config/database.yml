@@ -16,6 +16,22 @@ test:
   database: db/test.sqlite3
 
 production:
-  <<: *default
-  # The database URL will be set by your production environment (e.g., Heroku, Render)
-  url: <%= ENV["DATABASE_URL"] %>
+  # Define named production databases/roles so Rails' multiple database APIs
+  # (connects_to(:cache), connects_to(:writing), etc.) can resolve symbols.
+  # Each role falls back to DATABASE_URL when a specific DATABASE_<ROLE>_URL
+  # env var is not present.
+  primary:
+    <<: *default
+    url: <%= ENV['DATABASE_URL'] %>
+
+  cable:
+    <<: *default
+    url: <%= ENV['DATABASE_CABLE_URL'] || ENV['DATABASE_URL'] %>
+
+  cache:
+    <<: *default
+    url: <%= ENV['DATABASE_CACHE_URL'] || ENV['DATABASE_URL'] %>
+
+  queue:
+    <<: *default
+    url: <%= ENV['DATABASE_QUEUE_URL'] || ENV['DATABASE_URL'] %>
