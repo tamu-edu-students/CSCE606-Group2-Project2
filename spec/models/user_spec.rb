@@ -214,7 +214,7 @@ RSpec.describe User, type: :model do
         uid: "o-1",
         height_cm: 160,
         weight_kg: 60,
-        date_of_birth: Date.new(1900,1,1),
+        date_of_birth: Date.new(1900, 1, 1),
         sex: "female",
         activity_level: :sedentary,
         goal_type: :maintain,
@@ -233,7 +233,7 @@ RSpec.describe User, type: :model do
         uid: "m-1",
         height_cm: 170,
         weight_kg: 70,
-        date_of_birth: Date.new(1990,1,1),
+        date_of_birth: Date.new(1990, 1, 1),
         sex: "male",
         activity_level: :moderately_active,
         goal_type: :maintain,
@@ -252,7 +252,7 @@ RSpec.describe User, type: :model do
         uid: "c-1",
         height_cm: 170,
         weight_kg: 70,
-        date_of_birth: Date.new(1990,1,1),
+        date_of_birth: Date.new(1990, 1, 1),
         sex: "male",
         activity_level: :moderately_active,
         goal_type: :maintain,
@@ -275,7 +275,7 @@ RSpec.describe User, type: :model do
         uid: "auto-1",
         height_cm: 170,
         weight_kg: 70,
-        date_of_birth: Date.new(1990,1,1),
+        date_of_birth: Date.new(1990, 1, 1),
         sex: "male",
         activity_level: :moderately_active,
         goal_type: :maintain,
@@ -312,14 +312,14 @@ RSpec.describe User, type: :model do
     end
 
     it "basal_metabolic_rate differs by sex" do
-      m = described_class.create!(email: "m2@example.com", provider: "g", uid: "m2", height_cm: 180, weight_kg: 80, date_of_birth: Date.new(1990,1,1), sex: "male", activity_level: :moderately_active, goal_type: :maintain, survey_completed: true)
-      f = described_class.create!(email: "f2@example.com", provider: "g", uid: "f2", height_cm: 180, weight_kg: 80, date_of_birth: Date.new(1990,1,1), sex: "female", activity_level: :moderately_active, goal_type: :maintain, survey_completed: true)
+      m = described_class.create!(email: "m2@example.com", provider: "g", uid: "m2", height_cm: 180, weight_kg: 80, date_of_birth: Date.new(1990, 1, 1), sex: "male", activity_level: :moderately_active, goal_type: :maintain, survey_completed: true)
+      f = described_class.create!(email: "f2@example.com", provider: "g", uid: "f2", height_cm: 180, weight_kg: 80, date_of_birth: Date.new(1990, 1, 1), sex: "female", activity_level: :moderately_active, goal_type: :maintain, survey_completed: true)
 
       expect(m.send(:basal_metabolic_rate)).to be > f.send(:basal_metabolic_rate)
     end
 
     it "calculated_daily_carbs clamps at zero when remaining calories negative" do
-      u = described_class.create!(email: "c@example.com", provider: "g", uid: "c", height_cm: 160, weight_kg: 60, date_of_birth: Date.new(1990,1,1), sex: "male", activity_level: :sedentary, goal_type: :maintain, survey_completed: true)
+      u = described_class.create!(email: "c@example.com", provider: "g", uid: "c", height_cm: 160, weight_kg: 60, date_of_birth: Date.new(1990, 1, 1), sex: "male", activity_level: :sedentary, goal_type: :maintain, survey_completed: true)
 
       carbs = u.send(:calculated_daily_carbs, calories: 100, protein: 50, fats: 20)
       expect(carbs).to eq(0)

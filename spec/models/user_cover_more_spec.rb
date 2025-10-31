@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe "user cover more" do
   it "exercises many remaining User branches to raise coverage" do
     # Create users across different combos to exercise methods
-    m = User.create!(email: "u1@example.com", provider: "g", uid: "u1", height_cm: 180, weight_kg: 90, date_of_birth: Date.new(1980,1,1), sex: "male", activity_level: :extra_active, goal_type: :lose, survey_completed: true)
-    f = User.create!(email: "u2@example.com", provider: "g", uid: "u2", height_cm: 160, weight_kg: 60, date_of_birth: Date.new(1970,6,1), sex: "female", activity_level: :sedentary, goal_type: :gain, survey_completed: true)
+    m = User.create!(email: "u1@example.com", provider: "g", uid: "u1", height_cm: 180, weight_kg: 90, date_of_birth: Date.new(1980, 1, 1), sex: "male", activity_level: :extra_active, goal_type: :lose, survey_completed: true)
+    f = User.create!(email: "u2@example.com", provider: "g", uid: "u2", height_cm: 160, weight_kg: 60, date_of_birth: Date.new(1970, 6, 1), sex: "female", activity_level: :sedentary, goal_type: :gain, survey_completed: true)
 
     # ready_for_goal_calculation? true for both
     expect(m.send(:ready_for_goal_calculation?)).to be(true)
@@ -53,7 +53,7 @@ RSpec.describe "user cover more" do
     young = User.create!(email: "y3@example.com", provider: "g", uid: "y3", height_cm: 150, weight_kg: 40, date_of_birth: Date.today - 10.years, sex: "female", activity_level: :sedentary, goal_type: :maintain, survey_completed: true)
     expect(young.send(:age_in_years)).to eq(18)
 
-    old = User.create!(email: "old3@example.com", provider: "g", uid: "o3", height_cm: 150, weight_kg: 60, date_of_birth: Date.new(1900,1,1), sex: "female", activity_level: :sedentary, goal_type: :maintain, survey_completed: true)
+    old = User.create!(email: "old3@example.com", provider: "g", uid: "o3", height_cm: 150, weight_kg: 60, date_of_birth: Date.new(1900, 1, 1), sex: "female", activity_level: :sedentary, goal_type: :maintain, survey_completed: true)
     expect(old.send(:age_in_years)).to eq(100)
   end
 end

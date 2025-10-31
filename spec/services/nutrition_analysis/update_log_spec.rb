@@ -71,7 +71,7 @@ RSpec.describe NutritionAnalysis::UpdateLog do
 
   # Force the underlying save to fail on this specific instance and provide error messages
   allow(food_log).to receive(:save).and_return(false)
-  allow(food_log).to receive_message_chain(:errors, :full_messages).and_return(["DB write failed"])
+  allow(food_log).to receive_message_chain(:errors, :full_messages).and_return([ "DB write failed" ])
 
       result = described_class.new(food_log:, params: { food_name: "Unknown", photo: file }, analyzer: analyzer).call
 
@@ -111,7 +111,7 @@ RSpec.describe NutritionAnalysis::UpdateLog do
       expect(result).to be_success
       expect(result.food_log.calories).to eq(180)
     end
-  
+
     it "exposes helper behavior via its private methods (filtered_params, macro_fields_blank?, requires_analysis?)" do
       ul = described_class.new(food_log: food_log, params: { food_name: "X", calories: "", protein_g: "", fats_g: "", carbs_g: "", photo: nil })
 

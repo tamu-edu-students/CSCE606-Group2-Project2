@@ -9,7 +9,7 @@ RSpec.describe "cover remaining branches for coverage" do
       uid: "cover-1",
       height_cm: 170,
       weight_kg: 70,
-      date_of_birth: Date.new(1990,1,1),
+      date_of_birth: Date.new(1990, 1, 1),
       sex: "male",
       activity_level: :sedentary,
       goal_type: :maintain,
@@ -26,7 +26,7 @@ RSpec.describe "cover remaining branches for coverage" do
     %w[lose gain maintain].each do |g|
       u.goal_type = g
       v = u.send(:goal_adjustment)
-      expect([Integer, Float]).to include(v.class)
+      expect([ Integer, Float ]).to include(v.class)
     end
 
     # basal metabolic rate for male and female
@@ -55,7 +55,7 @@ RSpec.describe "cover remaining branches for coverage" do
 
     # VisionClient private helpers
     vc = NutritionAnalysis::VisionClient.new(openai_client: double("c"))
-    expect(vc.send(:strip_code_fences, "```json\n{\"a\":1}\n```" )).to include('{"a":1}')
+    expect(vc.send(:strip_code_fences, "```json\n{\"a\":1}\n```")).to include('{"a":1}')
     expect(vc.send(:convert_to_integer, "12.7")).to be_kind_of(Integer)
     expect(vc.send(:convert_to_integer, 5)).to eq(5)
     expect(vc.send(:convert_to_integer, nil)).to be_nil

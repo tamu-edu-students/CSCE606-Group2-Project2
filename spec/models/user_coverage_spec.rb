@@ -8,7 +8,7 @@ RSpec.describe "user coverage booster" do
       uid: "boost-1",
       height_cm: 175,
       weight_kg: 75,
-      date_of_birth: Date.new(1985,6,15),
+      date_of_birth: Date.new(1985, 6, 15),
       sex: "male",
       activity_level: :lightly_active,
       goal_type: :maintain,

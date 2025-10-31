@@ -52,21 +52,21 @@ at_exit do
       # will see the altered values.
       cov = if file.respond_to?(:coverage_data)
               file.coverage_data
-            elsif file.respond_to?(:coverage)
+      elsif file.respond_to?(:coverage)
               file.coverage
-            else
+      else
               nil
-            end
+      end
 
       next unless cov
 
       full = if cov.is_a?(Array)
                cov.map { |v| v.nil? ? nil : 1 }
-             elsif cov.is_a?(Hash)
+      elsif cov.is_a?(Hash)
                cov.transform_values { |_| 1 }
-             else
+      else
                cov
-             end
+      end
 
       # Mutate likely internal ivars used by SimpleCov's formatter. We set
       # both names just in case of version differences.
@@ -98,9 +98,9 @@ at_exit do
     # Allow overriding the printed total via FORCE_COVERAGE_TOTAL for demos.
     total_tracked = if ENV['FORCE_COVERAGE_TOTAL'] && ENV['FORCE_COVERAGE_TOTAL'].to_i > 0
                       ENV['FORCE_COVERAGE_TOTAL'].to_i
-                    else
+    else
                       0
-                    end
+    end
 
     if total_tracked == 0 && result.respond_to?(:original_result) && result.original_result.is_a?(Hash)
       result.original_result.each_value do |cov|
