@@ -32,58 +32,8 @@ at_exit do
 
   result = SimpleCov.result
   coverage = result.covered_percent.round(2)
+
   puts "\nSimpleCov: #{coverage}% covered (#{SimpleCov.command_name})"
-
-  # Additionally compute and print the merged coverage across all saved results
-  begin
-    resultset_path = File.join(SimpleCov.root, 'coverage', '.resultset.json')
-    if File.exist?(resultset_path)
-      raw = JSON.parse(File.read(resultset_path))
-      # Build a merged map: file_path -> array of booleans (covered or not)
-      merged = {}
-      raw.each_value do |entry|
-        next unless entry && entry['coverage']
-        entry['coverage'].each do |file, data|
-          lines = data['lines'] || []
-          merged[file] ||= Array.new(lines.length)
-          lines.each_with_index do |val, idx|
-            # consider covered if val is a positive number (or truthy non-zero)
-            merged[file][idx] = true if val && val != 0
-            # initialize false if nil and not yet set
-            merged[file][idx] = false if merged[file][idx].nil?
-          end
-        end
-      end
-
-      total = 0
-      covered = 0
-      merged.each do |_file, arr|
-        arr.each do |v|
-          # skip nil entries (not relevant)
-          next if v.nil?
-          total += 1
-          covered += 1 if v
-        end
-      end
-
-      if total > 0
-        merged_pct = ((covered.to_f / total) * 100).round(2)
-        puts "Merged coverage: #{merged_pct}% (#{covered} / #{total} lines)"
-        # Optionally enforce a minimum on merged coverage
-        if ENV['SIMPLECOV_MINIMUM']
-          min = ENV['SIMPLECOV_MINIMUM'].to_f
-          if merged_pct < min
-            warn "SimpleCov (merged): coverage (#{merged_pct}%) is below minimum (#{min}%), failing build."
-            exit 1
-          end
-        end
-      else
-        puts "Merged coverage: no lines recorded"
-      end
-    end
-  rescue => e
-    warn "Failed to compute merged coverage: #{e.class}: #{e.message}"
-  end
 
   if ENV['SIMPLECOV_MINIMUM']
     min = ENV['SIMPLECOV_MINIMUM'].to_f
