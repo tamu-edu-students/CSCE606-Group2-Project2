@@ -1,41 +1,88 @@
-## Calorie Counter Platform
+# Calorie Counter — AI-Assisted Nutrition Tracker
 
-This Rails 8 application helps users track daily calories and macros. Authenticated users can upload food photos for GPT-powered nutrition analysis, confirm the suggested entry, and monitor remaining targets on a clean dashboard. For accessibility, every workflow also supports manual entry with JavaScript disabled.
+Calorie Counter is a Ruby on Rails 8 application that helps users monitor calorie and macro targets, powered by Google OAuth sign-in and optional OpenAI Vision analysis for food photos. Every workflow degrades gracefully without JavaScript, so users can always enter meals and review dashboards regardless of device or accessibility settings. A full automated test suite and security scans run in CI to keep the experience reliable.
 
-### Highlights
-- Google OAuth login via OmniAuth (with graceful fallback in test mode).
-- Onboarding survey that stores height, weight, activity level, and goals, then calculates personalized daily targets.
-- Food logging with optional image upload passed to the OpenAI Vision API.
-- Dashboard summarizing macros remaining and listing today's meals.
-- Active Storage for image uploads, PostgreSQL-ready schema (SQLite in dev/test).
-- Comprehensive test suite (RSpec + Cucumber) with >90% merged coverage enforced in CI.
+---
 
-### Getting Started
-1. **Prerequisites**
-   - Ruby `3.4.5` (see `.ruby-version`).
-   - Bundler `>= 2.6`.
-   - SQLite3 for local development.
+## Key Capabilities
+- Google single sign-on via OmniAuth with a test-mode fallback for automated suites.
+- Onboarding survey that captures biometrics, computes personalized macro targets, and updates them as preferences change.
+- Food logging with optional image upload routed to the OpenAI Vision API; manual entry remains available if AI calls fail or credentials are missing.
+- Daily dashboard that surfaces remaining calories/macros, recent meals, and history filters.
+- Accessibility-first HTML forms that work with or without JavaScript and support screen readers.
+- CI workflow enforcing security scans, style checks, and 90% combined coverage across RSpec and Cucumber.
 
-2. **Install dependencies**
-   ```bash
-   bundle install
-   ```
+---
 
-3. **Database setup**
-   ```bash
-   bin/rails db:prepare
-   ```
+## Tech Stack
 
-4. **Run the app**
-   ```bash
-   bin/rails server
-   ```
-   Visit `http://localhost:3000` and sign in with Google.
+| Category | Details |
+| --- | --- |
+| Framework | Ruby on Rails 8.1 (Ruby 3.4.5) |
+| Frontend | Turbo, Stimulus, Importmap, Propshaft |
+| Authentication | OmniAuth Google OAuth 2.0 |
+| Data Store | SQLite (development/test), PostgreSQL (production) |
+| File Storage | Active Storage (local disk in development) |
+| Background & caching | Solid Queue, Solid Cache, Thruster + Puma |
+| AI Integration | OpenAI Vision via `ruby-openai` |
+| Testing | RSpec, Cucumber, SimpleCov |
+| Quality & Security | RuboCop Rails Omakase, Brakeman, Importmap audit |
+| CI/CD | GitHub Actions workflow at `.github/workflows/ci.yml` |
 
-### Environment Configuration
-Create `.env` / configure your shell with the following variables:
+---
 
-| Variable | Required | Purpose |
+## Architecture & Documentation
+
+- High-level diagrams live in `Diagrams/`:
+  - ![Architecture Diagram](Diagrams/Architecture.drawio.png)
+  - ![System Diagram](Diagrams/System.drawio.png)
+  - ![Database Schema](Diagrams/DBSchema.drawio.png)
+  - ![Class Diagram](Diagrams/Class.drawio.png)
+- Production-focused container image defined in `Dockerfile` (build with `docker build -t calorie-counter .`).
+- Domain services for AI analysis located under `app/services/nutrition_analysis/`.
+
+---
+
+## Getting Started
+
+### 1. Prerequisites
+
+| Tool | Version / Notes |
+| --- | --- |
+| Ruby | 3.4.5 (match `.ruby-version`; install via `rbenv install 3.4.5`) |
+| Bundler | ≥ 2.6 (`gem install bundler`) |
+| SQLite3 | Required for local development/test (`brew install sqlite` or `sudo apt-get install sqlite3 libsqlite3-dev`) |
+| PostgreSQL | Required for production deployments |
+| Git | `sudo apt-get install git` or `brew install git` |
+
+### 2. Clone the repository
+
+```bash
+git clone https://github.com/tamu-edu-students/CSCE606-Group2-Project2.git
+cd CSCE606-Group2-Project2
+```
+
+### 3. Configure environment variables
+
+Create `.env` (or export variables in your shell) and keep it out of version control:
+
+```bash
+cat <<'EOF' > .env
+export GOOGLE_CLIENT_ID=your-google-client-id
+export GOOGLE_CLIENT_SECRET=your-google-client-secret
+# Optional: enable AI photo analysis
+export OPENAI_API_KEY=sk-your-openai-key
+export OPENAI_VISION_MODEL=gpt-4o-mini
+EOF
+```
+
+Load the variables before running Rails:
+
+```bash
+source .env
+```
+
+| Variable | Required | Description |
 | --- | --- | --- |
 | `GOOGLE_CLIENT_ID` | yes (production/dev) | OAuth 2.0 client ID for Google sign-in. |
 | `GOOGLE_CLIENT_SECRET` | yes (production/dev) | OAuth client secret. |
