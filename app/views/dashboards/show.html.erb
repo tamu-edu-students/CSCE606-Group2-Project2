@@ -60,7 +60,11 @@
           <tr>
             <td>
               <strong><%= log.food_name %></strong>
-              <small class="text-muted"><%= l log.created_at, format: :short %></small>
+              <small class="text-muted">
+                <time data-controller="local-time" data-local-time-format-value="short" datetime="<%= log.created_at.iso8601 %>">
+                  <%= l log.created_at, format: :short %>
+                </time>
+              </small>
             </td>
             <td><%= log.calories %></td>
             <td><%= log.protein_g %> g</td>
