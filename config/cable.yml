@@ -12,6 +12,11 @@ production:
   adapter: solid_cable
   connects_to:
     database:
-      writing: cable
+      # Use the primary/production database for Action Cable in production.
+      # The previous configuration referenced a separate "cable" database
+      # which is not defined in config/database.yml on Heroku. Pointing
+      # this to `primary` uses the app's main DATABASE_URL and avoids
+      # the AdapterNotSpecified error on boot.
+      writing: primary
   polling_interval: 0.1.seconds
   message_retention: 1.day

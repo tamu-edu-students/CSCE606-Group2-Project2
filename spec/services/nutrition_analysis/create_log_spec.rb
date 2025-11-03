@@ -65,5 +65,31 @@ RSpec.describe NutritionAnalysis::CreateLog do
       expect(result.error_message).to eq("API unavailable")
       expect(result.food_log).not_to be_persisted
     end
+
+    it "returns an error when saving the analyzed food_log fails" do
+      analyzer = instance_double(
+        NutritionAnalysis::VisionClient,
+        analyze: NutritionAnalysis::VisionClient::Analysis.new(
+          success?: true,
+          food_name: "AI Wrap",
+          macros: { calories: 250, protein_g: 8, fats_g: 6, carbs_g: 30 }
+        )
+      )
+
+      file = Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/files/sample.jpg"), "image/jpeg")
+
+      # Force any created FoodLog save to fail and provide error messages
+      allow_any_instance_of(FoodLog).to receive(:save).and_return(false)
+      allow_any_instance_of(FoodLog).to receive_message_chain(:errors, :full_messages).and_return([ "DB write failed" ])
+
+      result = described_class.new(
+        user:,
+        params: { food_name: "Unknown", photo: file },
+        analyzer:
+      ).call
+
+      expect(result).not_to be_success
+      expect(result.error_message).to include("DB write failed")
+    end
   end
 end
