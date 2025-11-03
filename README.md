@@ -10,27 +10,28 @@ It’s fully tested with RSpec and Cucumber, styled with Rubocop, and includes G
 
 | Resource | Link / Notes |
 | --- | --- |
-| Heroku Dashboard | TBD (deployment in progress) |
+| Heroku Dashboard | https://diet-tracker-7b90cf3013e1.herokuapp.com/dashboard |
 | GitHub Actions | https://github.com/tamu-edu-students/CSCE606-Group2-Project2/actions |
-| GitHub Projects Dashboard | https://github.com/orgs/tamu-edu-students/projects (Project 2 board) |
-| Burn up chart | https://github.com/orgs/tamu-edu-students/projects (Insights available once milestones begin) |
-| Slack Group (Scrum) | `#project2-checkins` (link shared in the course workspace) |
-| Daily Scrum | 9PM–9:30PM on Zoom (Slack workflow posts reminder with meeting link) |
+| GitHub Projects Dashboard | https://github.com/orgs/tamu-edu-students/projects/165 |
+| Burn up chart | https://github.com/orgs/tamu-edu-students/projects/165/insights?period=1M  |
+| Slack Group (Scrum) | https://csce606group2.slack.com/ |
+| Daily Scrum | 10PM–10:30PM on Zoom (Slack workflow posts reminder with meeting link) |
 
 ---
 
 ## Features
 
-- Google OAuth-based login with OmniAuth (test mode support for automated suites)
-- Complete onboarding survey to compute calorie and macro goals with metric/imperial input
-- Create, edit, and delete food logs with optional photo uploads stored via Active Storage
-- Trigger AI-powered nutrition analysis using OpenAI Vision when macro fields are blank
-- View daily dashboard summarizing remaining calories, macro balance, and recent meals
-- Sort food logs by date or macronutrients with grouping by day
-- Manual logging paths that work with or without JavaScript enabled
-- RSpec and Cucumber tests for backend calculations and end-to-end flows
-- RuboCop, Brakeman, and Importmap audit checks enforced through GitHub Actions
-- CI/CD pipeline that deploys automatically to Heroku once all checks pass
+- Google OAuth sign-in via OmniAuth (supports test mode for automated suites; requires GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET or test mode; set DEFAULT_HOST for production callbacks)
+- Guided onboarding survey that computes personalized calorie and macronutrient goals (supports metric & imperial inputs)
+- Create, edit, and delete food logs with optional photo uploads (Active Storage)
+- AI-powered photo analysis via OpenAI Vision when macro fields are blank (requires OPENAI_API_KEY; calls have a short timeout and fall back to manual entry on failure)
+- Dashboard summarizing today’s remaining calories and macro balance, plus recent meals
+- Grouped food log history (entries grouped by date) and sortable history columns (date, calories, protein, fats, carbs; asc/desc)
+- Full server-side flows (progressive enhancement) — app works without JavaScript enabled
+- DB-backed background processing using SolidQueue for async tasks (requires SolidQueue migrations + a worker or enable in Puma)
+- RSpec + Cucumber test suites with merged coverage via SimpleCov
+- Linting & security checks (RuboCop, Brakeman, importmap audit) enforced in CI
+- CI/CD pipeline that can deploy to Heroku automatically (requires Heroku secrets in GitHub; workflow must use full checkout and migrations are only run automatically if you add a post-deploy migration step)
 
 ---
 
@@ -38,12 +39,12 @@ It’s fully tested with RSpec and Cucumber, styled with Rubocop, and includes G
 
 | Category | Technology |
 | --- | --- |
-| Framework | Ruby on Rails 8.1 |
+| Framework | Ruby on Rails 8.1.1 |
 | Language | Ruby 3.4.5 (see `.ruby-version`) |
 | Database | SQLite (Dev/Test), PostgreSQL (Heroku) |
 | Authentication | Google OAuth via OmniAuth (`omniauth-google-oauth2`) |
 | Testing | RSpec, Cucumber, SimpleCov |
-| Linting | RuboCop Rails Omakase, Brakeman, Importmap audit |
+| Linting | RuboCop |
 | CI/CD | GitHub Actions (`.github/workflows/ci.yml`) |
 | File Storage | Active Storage (local disk in dev/test) |
 | AI Integration | OpenAI Vision via `ruby-openai` |
@@ -64,7 +65,7 @@ Make sure you have the following installed:
 | Bundler | `gem install bundler` |
 | SQLite3 (for local development) | `sudo apt-get install sqlite3 libsqlite3-dev` (Linux) or `brew install sqlite3` (Mac) |
 | Git | `sudo apt install git` |
-| Heroku CLI | Install guide |
+| Heroku CLI | [Install guide](https://devcenter.heroku.com/articles/heroku-cli) |
 
 ### 2️⃣ Clone the Repository
 
@@ -126,14 +127,14 @@ open coverage/index.html
 
 ```bash
 heroku login
-heroku create <your-app-name>  # ex: heroku create calorie-counter-group2
+heroku create <your-app-name>  # in this case 'heroku create diet-tracker'
 ```
 
 **Step 2: Add PostgreSQL Add-on**
 
 ```bash
 heroku addons:create heroku-postgresql:mini --app <your-app-name>
-# ex: heroku addons:create heroku-postgresql:mini --app calorie-counter-group2
+# in this case 'heroku addons:create heroku-postgresql:mini --app diet-tracker'
 ```
 
 Run `git remote` to confirm the new `heroku` remote, and `git remote show heroku` to verify the target URL.
@@ -149,14 +150,14 @@ Add the following under GitHub → Settings → Secrets and Variables → Action
 | `HEROKU_EMAIL` | Your Heroku account email |
 | `GOOGLE_CLIENT_ID` | OAuth client ID used by the Rails app |
 | `GOOGLE_CLIENT_SECRET` | OAuth client secret |
-| `OPENAI_API_KEY` | Optional - API key for vision-based nutrition analysis |
+| `OPENAI_API_KEY` | API key for vision-based nutrition analysis |
 
 **Step 4: Database Setup and Deployment**
 
 ```bash
 # Run on first deploy
-heroku run bin/rails db:migrate --app <your-app-name>
-heroku run bin/rails db:seed --app <your-app-name>
+heroku run bin/rails db:migrate --app diet-tracker
+heroku run bin/rails db:seed --app diet-tracker
 ```
 
 These steps are added as worker processes in the Procfile to avoid manual repetition. Every merge to `main` triggers deployment through `.github/workflows/ci.yml`. Track progress under the repository Actions tab; the deploy job only runs after all checks pass.
@@ -164,8 +165,8 @@ These steps are added as worker processes in the Procfile to avoid manual repeti
 **Manual Deployment (if not using GitHub Actions)**
 
 ```bash
-heroku run bin/rails db:migrate --app <your-app-name>
-heroku run bin/rails db:seed --app <your-app-name>
+heroku run bin/rails db:migrate --app diet-tracker
+heroku run bin/rails db:seed --app diet-tracker
 git push heroku main
 heroku open
 ```
@@ -201,10 +202,18 @@ heroku open
 
 ## Project Diagrams
 
-- **Database Schema Design (ER):** `Diagrams/DBSchema.drawio.png`
-- **System Diagram:** `Diagrams/System.drawio.png`
-- **Architecture Diagram:** `Diagrams/Architecture.drawio.png`
-- **Class Diagram:** `Diagrams/Class.drawio.png`
+- **System Diagram:**
+
+   ![System diagram](Diagrams/System.drawio.png)
+- **Architecture Diagram:**
+
+   ![Architecture diagram](Diagrams/Architecture.drawio.png)
+- **Class Diagram:**
+
+   ![Class diagram](Diagrams/Class.drawio.png)
+- **Database Schema Design (ER):**
+
+   ![Database schema diagram](Diagrams/DBSchema.drawio.png)
 
 ---
 
@@ -215,7 +224,7 @@ Calorie Counter is designed to make nutrition tracking simple, guided, and resil
 ### Getting Started
 
 **Access the App**  
-Visit your deployed app once the Heroku pipeline completes (ex: https://calorie-counter-group2.herokuapp.com/)
+Visit your deployed app once the Heroku pipeline completes (ex: https://diet-tracker-7b90cf3013e1.herokuapp.com)
 
 **Sign Up / Log In**
 
@@ -233,12 +242,12 @@ After signing in, the dashboard highlights:
 
 ### Creating and Editing Food Logs
 
-1. Click **Log a meal** from the dashboard.
+1. Click **Add a food entry** from the dashboard.
 2. Provide a food name and either:
    - Enter calories, protein, fats, and carbs manually, or
    - Upload a photo so the AI service can suggest values.
-3. Click **Create** to save; the log appears grouped by date.
-4. To edit, open a food entry, adjust values (or upload a new photo), then click **Update**.
+3. Click **Save entry** to save; the log appears grouped by date.
+4. To edit, open a food entry, adjust values (or upload a new photo), then click **Save Changes**.
 
 > Tip: Logs are sorted by most recent by default. Use the sort picker to switch between date and macro-based ordering.
 
@@ -252,9 +261,8 @@ After signing in, the dashboard highlights:
 ### Managing Your Account
 
 - **Update Goals:** Go to Profile → Update goals, adjust weight/activity/goal, and submit to recalculate macros instantly.
-- **Delete Account:** Choose Delete Account → Confirm to permanently remove your account and associated logs.
 
-We designed Calorie Counter to respect user control—personal data is scrubbed during deletion, and AI suggestions never persist without explicit confirmation.
+We designed Calorie Counter keeping in mind the user personal data is encrypted and AI suggestions never persist without explicit confirmation.
 
 ---
 
@@ -276,7 +284,7 @@ We designed Calorie Counter to respect user control—personal data is scrubbed 
 - Upload clear, well-lit photos for best AI results.
 - Review AI-suggested macros before saving.
 - Log meals shortly after eating for precise day totals.
-- Store your OpenAI key in `.env` during development and Heroku config vars in production.
+- Store your OpenAI key in GH secrets during development and Heroku config vars in production.
 
 ---
 
@@ -295,14 +303,18 @@ These accounts exist only in local/test environments and are not persisted unles
 
 ## Troubleshooting
 
-| Problem | Cause | Solution |
+| Problem | Likely cause(s) | Suggested fix / verification |
 | --- | --- | --- |
-| Cannot sign in | `GOOGLE_CLIENT_ID`/`SECRET` missing | Export both values or enable OmniAuth test mode |
-| AI analysis fails | `OPENAI_API_KEY` not set or request timed out | Check logs and ensure API key is configured |
-| No coverage report after tests | SimpleCov not required | Require SimpleCov before specs or rerun with `SIMPLECOV_MINIMUM` |
-| Heroku deploy fails | Secrets missing in GitHub Actions | Add `HEROKU_*` and Google credentials to repository secrets |
-| Macros don’t update after profile change | Onboarding form submitted without recalculation | Check flash message and revisit Update goals |
-| Local server crashes on photo upload | ImageMagick missing (for variants) | Install `image_processing` dependencies or remove variant usage |
+| Cannot sign in (Google OAuth) | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` missing, `DEFAULT_HOST` / callback URL mismatch, or Google consent not configured | 1. Ensure `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` are set locally (e.g. `.env`) and in Heroku / GitHub Secrets. 2. Confirm `DEFAULT_HOST` matches production callback and is registered in Google Console. 3. Tail logs while reproducing: `heroku logs --tail -a <app>` and check `/auth/google_oauth2` requests. |
+| AI analysis fails or times out | `OPENAI_API_KEY` missing/invalid, network issue, client timeout too short, or response parsing error | 1. Verify `OPENAI_API_KEY` present in env/config. 2. Inspect app logs for HTTP errors / JSON parse errors. 3. Increase client timeout if needed (we use 8s by default). 4. Add defensive parsing: log raw response and fall back to manual entry (app already does this). |
+| No coverage report after tests | SimpleCov not required early enough, resultset stale, or separate processes not merged | 1. Require SimpleCov at test startup (spec/simplecov_helper.rb). 2. Delete `coverage/.resultset.json` before running tests to force fresh merge. 3. Run RSpec then Cucumber and open `coverage/index.html`. |
+| Heroku deploy fails | Missing Heroku secrets in CI, shallow checkout (fetch-depth), missing add-ons or buildpack mismatch | 1. Confirm GitHub Actions secrets: `HEROKU_API_KEY`, `HEROKU_APP_NAME`. 2. Ensure `actions/checkout` uses `fetch-depth: 0`. 3. Check required add-ons (Postgres, S3) exist: `heroku addons -a <app>`. 4. Tail build logs in Actions and Heroku. |
+| Macros don’t update after profile change | Normalizer service not invoked, parameters not passed, or exceptions swallowed | 1. Check logs for exceptions during profile update. 2. Verify `MeasurementParamsNormalizer` receives `measurement_system` and `User#calculate_goals!` runs. 3. Add or run regression tests for profile -> goal recalculation. |
+| Local server crashes on photo upload | Native image-processing libs missing (libvips/ImageMagick) or Active Storage misconfigured | 1. Install native deps (macOS: `brew install vips` or `brew install imagemagick`). 2. Ensure `image_processing` and `mini_magick`/`ruby-vips` gems installed. 3. For production, configure Active Storage with an S3-compatible service. |
+| Pending migrations / app startup shows PendingMigrationError | Migrations not applied on environment | Run: `rails db:migrate` (dev/test) or on Heroku: `heroku run rails db:migrate -a <app>` then restart dynos. |
+| SolidQueue/ActiveJob enqueue errors (`PG::UndefinedTable`) | SolidQueue tables missing or worker not running | 1. Ensure SolidQueue migration ran (add migration `db/migrate/*create_solid_queue_tables.rb` if missing). 2. Run `rails db:migrate`. 3. Start a worker: either run SolidQueue in Puma (`SOLID_QUEUE_IN_PUMA=true`) or provision a worker dyno: `Procfile: worker: bundle exec bin/jobs` and `heroku ps:scale worker=1`. |
+| Active Storage / attachments fail in production | No persistent storage configured (Heroku ephemeral filesystem) | Configure S3 (or other cloud storage) and set `config.active_storage.service = :amazon` with credentials in env vars. |
+| OpenAI parse / invalid JSON errors | Model returned unexpected text or partial stream, parse logic not robust | 1. Log raw responses and include response headers. 2. Sanitize text before JSON.parse (strip code fences, remove non-JSON prefixes). 3. Consider using structured output (function-calling / JSON schema) if stable schema is required. |
 
 ---
 
@@ -311,7 +323,7 @@ These accounts exist only in local/test environments and are not persisted unles
 ### ADR 1 – Authentication with Google OAuth
 
 - **Status:** Accepted  
-- **Date:** 09-15-2024
+- **Date:** 10-15-2025
 
 **Context**  
 We needed a low-friction way for students to authenticate without managing passwords, while aligning with university SSO expectations and project rubric requirements.
@@ -327,7 +339,7 @@ Use OmniAuth with the `google_oauth2` strategy, enabling test mode in non-produc
 ### ADR 2 – Macro Goal Calculation Service
 
 - **Status:** Accepted  
-- **Date:** 09-21-2024
+- **Date:** 10-18-2025
 
 **Context**  
 During onboarding, users supply height, weight, activity level, and goal. The logic must support metric/imperial inputs and recalculations when preferences change.
@@ -344,7 +356,7 @@ Isolate data normalization in `MeasurementParamsNormalizer` and encapsulate calc
 ### ADR 3 – Vision AI for Macro Suggestions
 
 - **Status:** Accepted  
-- **Date:** 09-28-2024
+- **Date:** 10-21-2025
 
 **Context**  
 Students requested a fast path to log meals from photos without typing macros. We evaluated client-side OCR vs. server-side AI.
@@ -360,7 +372,7 @@ Integrate OpenAI Vision through `NutritionAnalysis::VisionClient`, generating su
 ### ADR 4 – Progressive Enhancement for No-JS Flow
 
 - **Status:** Accepted  
-- **Date:** 10-02-2024
+- **Date:** 10-23-2024
 
 **Context**  
 Accessibility requirements and the grading rubric mandate full functionality without JavaScript, yet we still want responsive UX for modern browsers.
@@ -379,23 +391,27 @@ Build forms with Rails helpers (`form_with local: true`) and rely on Turbo only 
 
 ### Issue 1: OAuth Redirect URI Mismatch
 
-- **Date:** 09-24-2024  
+- **Date:** 11-01-2025  
 - **Status:** Resolved  
 - **Related ADR:** ADR 1 – Authentication with Google OAuth  
 - **Affected Areas:** Login flow, onboarding redirect
 
 **Summary**  
+
 During our first Heroku deployment the Google console had not been updated with the production callback URL, causing sign-ins to fail with a 400 error.
 
 **Impact**  
+
 - User Experience: All users saw "Authentication failed" after Google redirected back.  
 - System Integrity: No data loss, but sessions were never established so dashboards were inaccessible.  
 - Business Impact: High—blocked every login attempt in production.
 
 **Root Cause**  
+
 The OmniAuth initializer relied on default callback URLs, but the Google Cloud project only whitelisted localhost addresses. Heroku's hostname triggered a mismatch.
 
 **Resolution**  
+
 Added the Heroku URL to the OAuth consent screen, updated the initializer to read `ENV["DEFAULT_HOST"]`, and configured `config.action_controller.default_url_options`. Rolled a hotfix deploy after confirming sign-in via smoke tests.
 
 **Implementation Highlights**
@@ -406,11 +422,12 @@ Added the Heroku URL to the OAuth consent screen, updated the initializer to rea
 
 ### Issue 2: Nutrition Analysis Timeouts
 
-- **Date:** 10-03-2024  
+- **Date:** 10-28-2025  
 - **Status:** Resolved  
 - **Affected Areas:** Food log creation, AI service integration
 
 **Summary**  
+
 API calls to OpenAI occasionally exceeded 10 seconds, freezing the create/update flow and confusing users with blank pages.
 
 **Impact**  
@@ -419,9 +436,11 @@ API calls to OpenAI occasionally exceeded 10 seconds, freezing the create/update
 - Business Impact: Medium—manual entry still worked, but the flagship AI feature was unreliable.
 
 **Root Cause**  
+
 We instantiated the OpenAI client per request without setting a timeout, so slow responses blocked Puma workers.
 
 **Resolution**  
+
 Introduced a connection-level timeout, moved client instantiation to a memoized helper, and added rescue logic with a friendly flash alert.
 
 **Implementation Highlights**
@@ -429,6 +448,33 @@ Introduced a connection-level timeout, moved client instantiation to a memoized 
 - `NutritionAnalysis::VisionClient` now sets `request_timeout: 8` seconds.  
 - Controller handles failure states and re-renders with the uploaded image.  
 - Cucumber scenario covers the error path to avoid regressions.
+
+### Issue 3: SolidQueue missing migration (PG::UndefinedTable)
+
+- **Date:** 11-03-2025
+- **Status:** Resolved
+- **Summary:** 
+
+Fixed a production SolidQueue issue by adding and running the missing SolidQueue migration so ActiveJob enqueues no longer fail with `PG::UndefinedTable`.
+
+**Impact** 
+- User Experience: The AI image analysis feature failed silently. Users could upload an image, but the nutritional data would never be processed and would never appear on their dashboard.
+- System Integrity: The job queue was completely non-functional. The app's error-tracking service was flooded with thousands of PG::UndefinedTable exceptions, making it difficult to spot other production issues.
+- Business Impact: High. The core AI feature was broken in production, and all other background tasks were also failing.
+
+**Root Cause**
+
+SolidQueue maintains its own schema definition (in db/queue_schema.rb) for its tables. During the initial production deployment, the standard rails db:migrate command was run, but the separate step to install and migrate SolidQueue's tables was missed. The application code was trying to enqueue jobs by writing to tables like solid_queue_jobs, which did not exist in the production database.
+
+**Resolution**
+
+The `solid_queue:install:migrations` generator was run locally to create a standard migration file. This file, which mirrors the queue_schema.rb content, was then committed to the repository and deployed. Running rails db:migrate on the production server created all the necessary tables for SolidQueue to function. The dynos were then restarted to clear any lingering worker errors.
+
+**Implementation Highlights**
+
+- Added a DB migration mirroring `db/queue_schema.rb` to create SolidQueue's required tables.
+- Ran `rails db:migrate` on production and confirmed enqueues succeed; restarted dynos to clear lingering worker errors.
+
 
 ---
 
