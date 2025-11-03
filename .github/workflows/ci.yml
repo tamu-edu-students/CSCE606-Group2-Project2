@@ -74,6 +74,15 @@ jobs:
     needs: [scan_ruby, scan_js, lint, test]
     steps:
       - uses: actions/checkout@v5
+      - name: Ensure Heroku receives main (explicit push)
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        run: |
+          # Fetch the authoritative main branch and push it to Heroku main so Heroku will build
+          git fetch origin main:main || true
+          git remote add heroku https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git || true
+          git push heroku main:main --force
       - name: Install Heroku CLI
         run: |
           curl https://cli-assets.heroku.com/install.sh | sh
