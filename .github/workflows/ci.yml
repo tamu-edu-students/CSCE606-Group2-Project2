@@ -73,7 +73,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [scan_ruby, scan_js, lint, test]
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout code (full history)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - name: Ensure Heroku receives main (explicit push)
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
