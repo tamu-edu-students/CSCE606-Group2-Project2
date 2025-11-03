@@ -48,7 +48,11 @@
 
           <% sorted.each do |log| %>
             <tr>
-              <td><%= l log.created_at, format: :short %></td>
+              <td>
+                <time data-controller="local-time" data-local-time-format-value="short" datetime="<%= log.created_at.iso8601 %>">
+                  <%= l log.created_at, format: :short %>
+                </time>
+              </td>
               <td>
                 <strong><%= log.food_name %></strong>
                 <% if log.photo.attached? %>

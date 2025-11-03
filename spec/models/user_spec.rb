@@ -158,4 +158,178 @@ RSpec.describe User, type: :model do
       expect(user.daily_calories_goal).to be_positive
     end
   end
+
+  describe "#validate_calculated_goals!" do
+    it "logs warnings when calculated goals are outside expected ranges" do
+      # Create a small user to call the private method via send
+      u = described_class.create!(
+        email: "warn@example.com",
+        provider: "google_oauth2",
+        uid: "warn-1",
+        height_cm: 180,
+        weight_kg: 80,
+        date_of_birth: Date.new(1990, 1, 1),
+        sex: "male",
+        activity_level: :very_active,
+        goal_type: :gain,
+        survey_completed: true
+      )
+
+      extreme_goals = {
+        daily_calories_goal: 10_000,
+        daily_protein_goal_g: 9999,
+        daily_fats_goal_g: 9999,
+        daily_carbs_goal_g: 9999
+      }
+
+      expect(Rails.logger).to receive(:warn).at_least(:once)
+      u.send(:validate_calculated_goals!, extreme_goals).tap do |ret|
+        expect(ret).to be_truthy
+      end
+    end
+  end
+
+  describe "age and clamps" do
+    it "clamps age under 18 to 18" do
+      u = described_class.create!(
+        email: "young@example.com",
+        provider: "google_oauth2",
+        uid: "y-1",
+        height_cm: 160,
+        weight_kg: 50,
+        date_of_birth: Date.today - 10.years,
+        sex: "female",
+        activity_level: :sedentary,
+        goal_type: :maintain,
+        survey_completed: true
+      )
+
+      expect(u.send(:age_in_years)).to eq(18)
+    end
+
+    it "clamps age over 100 to 100" do
+      u = described_class.create!(
+        email: "old@example.com",
+        provider: "google_oauth2",
+        uid: "o-1",
+        height_cm: 160,
+        weight_kg: 60,
+        date_of_birth: Date.new(1900, 1, 1),
+        sex: "female",
+        activity_level: :sedentary,
+        goal_type: :maintain,
+        survey_completed: true
+      )
+
+      expect(u.send(:age_in_years)).to eq(100)
+    end
+  end
+
+  describe "calculation helpers" do
+    it "complete_survey! saves when manual goals provided" do
+      u = described_class.create!(
+        email: "manual@example.com",
+        provider: "google_oauth2",
+        uid: "m-1",
+        height_cm: 170,
+        weight_kg: 70,
+        date_of_birth: Date.new(1990, 1, 1),
+        sex: "male",
+        activity_level: :moderately_active,
+        goal_type: :maintain,
+        survey_completed: false
+      )
+
+      u.complete_survey!(daily_calories_goal: 1800)
+      expect(u.reload.survey_completed).to be(true)
+      expect(u.daily_calories_goal).to eq(1800)
+    end
+
+    it "returns a calculation breakdown and goals comparison" do
+      u = described_class.create!(
+        email: "comp@example.com",
+        provider: "google_oauth2",
+        uid: "c-1",
+        height_cm: 170,
+        weight_kg: 70,
+        date_of_birth: Date.new(1990, 1, 1),
+        sex: "male",
+        activity_level: :moderately_active,
+        goal_type: :maintain,
+        survey_completed: true
+      )
+
+      bd = u.calculation_breakdown
+      expect(bd).to include(:bmr, :tdee, :final_calories)
+
+      gc = u.goals_comparison
+      expect(gc[:calories]).to include(:current, :calculated, :difference)
+    end
+  end
+
+  describe "auto recalculation" do
+    it "recalculates goals after save when relevant attributes change" do
+      u = described_class.create!(
+        email: "auto@example.com",
+        provider: "google_oauth2",
+        uid: "auto-1",
+        height_cm: 170,
+        weight_kg: 70,
+        date_of_birth: Date.new(1990, 1, 1),
+        sex: "male",
+        activity_level: :moderately_active,
+        goal_type: :maintain,
+        survey_completed: true
+      )
+
+      expect_any_instance_of(described_class).to receive(:calculate_goals!).once
+      u.update!(weight_kg: 75)
+    end
+  end
+
+  describe "private helpers coverage" do
+    it "returns correct activity multipliers for known levels" do
+      u = subject
+      expect(u.send(:activity_multiplier)).to be_within(0.001).of(1.55)
+
+      u.activity_level = :sedentary
+      expect(u.send(:activity_multiplier)).to be_within(0.001).of(1.2)
+
+      u.activity_level = :very_active
+      expect(u.send(:activity_multiplier)).to be_within(0.001).of(1.725)
+    end
+
+    it "applies goal adjustments for lose/gain/maintain" do
+      u = subject
+      u.goal_type = :lose
+      expect(u.send(:goal_adjustment)).to eq(-500)
+
+      u.goal_type = :gain
+      expect(u.send(:goal_adjustment)).to eq(300)
+
+      u.goal_type = :maintain
+      expect(u.send(:goal_adjustment)).to eq(0)
+    end
+
+    it "basal_metabolic_rate differs by sex" do
+      m = described_class.create!(email: "m2@example.com", provider: "g", uid: "m2", height_cm: 180, weight_kg: 80, date_of_birth: Date.new(1990, 1, 1), sex: "male", activity_level: :moderately_active, goal_type: :maintain, survey_completed: true)
+      f = described_class.create!(email: "f2@example.com", provider: "g", uid: "f2", height_cm: 180, weight_kg: 80, date_of_birth: Date.new(1990, 1, 1), sex: "female", activity_level: :moderately_active, goal_type: :maintain, survey_completed: true)
+
+      expect(m.send(:basal_metabolic_rate)).to be > f.send(:basal_metabolic_rate)
+    end
+
+    it "calculated_daily_carbs clamps at zero when remaining calories negative" do
+      u = described_class.create!(email: "c@example.com", provider: "g", uid: "c", height_cm: 160, weight_kg: 60, date_of_birth: Date.new(1990, 1, 1), sex: "male", activity_level: :sedentary, goal_type: :maintain, survey_completed: true)
+
+      carbs = u.send(:calculated_daily_carbs, calories: 100, protein: 50, fats: 20)
+      expect(carbs).to eq(0)
+    end
+
+    it "normalize_email_and_sex lowercases values on validation" do
+      u = described_class.new(email: "UPPER@EX.COM", provider: "g", uid: "nz-1", sex: "MALE")
+      u.valid?
+      expect(u.email).to eq("upper@ex.com")
+      expect(u.sex).to eq("male")
+    end
+  end
 end

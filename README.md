@@ -84,90 +84,45 @@ source .env
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `GOOGLE_CLIENT_ID` | Yes (dev/prod) | OAuth client ID created in the Google Cloud Console. |
-| `GOOGLE_CLIENT_SECRET` | Yes (dev/prod) | OAuth client secret paired with the client ID. |
-| `OPENAI_API_KEY` | Optional | Enables automatic nutrition analysis for uploaded photos. Without it, users still log meals manually. |
-| `OPENAI_VISION_MODEL` | Optional | Overrides the default `gpt-4o-mini` model. |
+| `GOOGLE_CLIENT_ID` | yes (production/dev) | OAuth 2.0 client ID for Google sign-in. |
+| `GOOGLE_CLIENT_SECRET` | yes (production/dev) | OAuth client secret. |
+| `OPENAI_API_KEY` | optional | Enables GPT-based nutrition analysis for uploaded food photos. Without it, users can still enter macros manually. |
+| `OPENAI_VISION_MODEL` | optional | Override the default `gpt-4o-mini` vision model. |
 
-The project ships with `dotenv-rails`, so variables in `.env`, `.env.development`, or `.env.test` are loaded automatically.
+Test and development also respect `.env.test` / `.env.development` if you use `dotenv-rails` (not required).
 
-### 4. Install Ruby dependencies
+### Running Tests & Quality Checks
+- **RSpec unit/integration tests:** `bin/rails spec`
+- **Cucumber feature tests:** `bin/rails cucumber`
+- **All tests with coverage (90% minimum):**
+  ```bash
+  SIMPLECOV_MINIMUM=90 bin/rails spec
+  SIMPLECOV_MINIMUM=90 bin/rails cucumber
+  ```
+  Coverage reports are written to `coverage/` and merged automatically.
 
-```bash
-bundle install
-```
+- **Static analysis:**
+  ```bash
+  bin/brakeman           # security scan
+  bin/rubocop            # style & lint
+  bin/importmap audit    # JS dependency audit
+  ```
 
-### 5. Prepare the database
+### Working Without JavaScript
+Forms use standard HTML controls (`button_to`, `form_with` with `local: true`) so Google login, onboarding, and food logging remain functional when JS is disabled. Image uploads and AI analysis also work entirely server side.
 
-```bash
-bin/rails db:prepare
-```
+### GPT Nutrition Analysis
+`NutritionAnalysis::VisionClient` sends uploaded photos to OpenAI's vision endpoint. When `OPENAI_API_KEY` is absent or the API call fails, users receive actionable feedback and can still log meals by entering macros manually.
 
-This command creates, migrates, and seeds (if defined) both the development and test databases. Active Storage tables are included.
+### Continuous Integration
+`.github/workflows/ci.yml` runs on every push/PR:
+1. Security scans (Brakeman) and import map audit.
+2. Rubocop linting.
+3. RSpec + Cucumber, enforcing a ≥90% merged coverage threshold and uploading the HTML report as an artifact.
 
-### 6. Run the application locally
+### Additional Tips
+- OmniAuth automatically enters test mode in the test environment, so feature specs can sign in without real Google credentials.
+- Image attachments use Active Storage's disk service locally (`storage/`). Clean up with `bin/rails active_storage:install` migrations already provided.
+- To exercise the AI flow locally, set `OPENAI_API_KEY` and restart the server. Otherwise, manual macro entry remains available.
 
-```bash
-bin/rails server
-```
-
-Visit `http://localhost:3000`, sign in with Google, and complete the onboarding flow. In the test environment, OmniAuth switches to test mode automatically, so integration specs run without hitting Google.
-
-### 7. Execute the test suite and quality checks
-
-```bash
-# RSpec request/unit/system tests
-bin/rails spec
-
-# Cucumber feature tests
-bin/rails cucumber
-
-# Enforce 90% minimum coverage across suites
-SIMPLECOV_MINIMUM=90 bin/rails spec
-SIMPLECOV_MINIMUM=90 bin/rails cucumber
-
-# Static analysis
-bin/brakeman
-bin/rubocop
-bin/importmap audit
-```
-
-Coverage reports are written to `coverage/` and merged automatically when both suites run.
-
----
-
-## Continuous Integration
-
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and pull request:
-1. Brakeman security scan and import map audit.
-2. RuboCop linting (Omakase rules).
-3. RSpec and Cucumber suites with a 90% minimum coverage gate.
-4. Archive coverage artifacts for later inspection.
-
-Branch protection is easiest when local checks pass before opening a pull request.
-
----
-
-## Deployment Notes
-
-- The application is 12-factor ready: supply the same environment variables used locally, along with `RAILS_MASTER_KEY` from `config/master.key`.
-- The provided `Dockerfile` builds a production image that precompiles assets, installs gems, and runs the app via Thruster/Puma.
-- For platforms like Heroku or Render, ensure PostgreSQL is provisioned and run `bin/rails db:migrate` after each deploy.
-- Active Storage defaults to local disk; configure an S3-compatible service in production via `config/storage.yml`.
-
----
-
-## Troubleshooting & Developer Tips
-
-| Symptom | Likely Cause | Recommended Fix |
-| --- | --- | --- |
-| `bundle install` fails | Ruby version mismatch | Align with `.ruby-version` (`rbenv local 3.4.5 && bundle install`). |
-| Google sign-in button is hidden | Missing OAuth credentials | Export `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, then restart the server. |
-| Photo analysis returns an error banner | No OpenAI credentials or API failure | Set `OPENAI_API_KEY`, confirm the model name, or retry with manual macro entry. |
-| `ActiveRecord::PendingMigrationError` on startup | Database not prepared | Run `bin/rails db:prepare` (and include `RAILS_ENV=test` for the test database). |
-| Cucumber scenarios fail to sign in | Test env not loading OmniAuth test mode | Ensure `Rails.env.test?` is true (use `bin/rails cucumber`) and do not override `OmniAuth.config.test_mode`. |
-| GitHub Actions fails coverage gate | Suites not run with `SIMPLECOV_MINIMUM` | Execute both RSpec and Cucumber locally with the environment variable set to mirror CI. |
-
----
-
-Calorie Counter is maintained by CSCE 606 Group 2. Issues and enhancements are welcomed via pull requests—run the local checks above before submitting.
+Heroku Deployment, Added edge case test cases
