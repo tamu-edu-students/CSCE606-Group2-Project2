@@ -1,6 +1,6 @@
 ## Diet Tracker Platform
 
-Calorie Counter is a Ruby on Rails web application that allows users to log meals, calculate personalized macro targets, and stay accountable across devices. It supports Google OAuth sign-in, onboarding surveys that tailor goals, AI-powered photo analysis for food entries, and an accessible dashboard that works even when JavaScript is disabled.
+ Diet Tracker is a Ruby on Rails web application that allows users to log meals, calculate personalized macro targets, and stay accountable across devices. It supports Google OAuth sign-in, onboarding surveys that tailor goals, AI-powered photo analysis for food entries, and an accessible dashboard that works even when JavaScript is disabled.
 
 It’s fully tested with RSpec and Cucumber, styled with Rubocop, and includes GitHub Actions CI/CD that deploys automatically to Heroku after merging to main.
 
@@ -217,9 +217,9 @@ heroku open
 
 ---
 
-## User Guide — Calorie Counter
+## User Guide — Diet Tracker
 
-Calorie Counter is designed to make nutrition tracking simple, guided, and resilient—with photo analysis, macro dashboards, and onboarding that adapts to each user, all built on Ruby on Rails.
+Diet Tracker is designed to make nutrition tracking simple, guided, and resilient—with photo analysis, macro dashboards, and onboarding that adapts to each user, all built on Ruby on Rails.
 
 ### Getting Started
 
@@ -262,7 +262,7 @@ After signing in, the dashboard highlights:
 
 - **Update Goals:** Go to Profile → Update goals, adjust weight/activity/goal, and submit to recalculate macros instantly.
 
-We designed Calorie Counter keeping in mind the user personal data is encrypted and AI suggestions never persist without explicit confirmation.
+We designed Diet Tracker keeping in mind the user personal data is encrypted and AI suggestions never persist without explicit confirmation.
 
 ---
 
@@ -505,7 +505,7 @@ The `solid_queue:install:migrations` generator was run locally to create a stand
 
 ## Summary
 
-Calorie Counter helps you:
+Diet Tracker helps you:
 
 - Track calories and macros with AI-assisted workflows
 - Personalize nutrition goals through guided onboarding
