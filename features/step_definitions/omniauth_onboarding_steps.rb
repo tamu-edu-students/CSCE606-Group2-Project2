@@ -149,7 +149,7 @@ Then('I should see my dashboard') do
     /Welcome to your dashboard/i,
     /Dashboard\b/i,
     /Food logs/i,
-    /Calorie Counter/i
+  /Diet Tracker/i
   ]
 
   if dashboard_indicators.any? { |r| page.has_content?(r) }

@@ -5,7 +5,7 @@ RSpec.describe 'Home', type: :request do
     it 'renders the home page with hero content when not signed in' do
       get root_path
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include('Calorie Counter')
+  expect(response.body).to include('Diet Tracker')
       expect(response.body).to include('Sign in with Google')
     end
   end

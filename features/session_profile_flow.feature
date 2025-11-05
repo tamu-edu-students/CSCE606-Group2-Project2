@@ -17,4 +17,4 @@ Feature: Session and profile flow
     Given I am signed in
     When I click the "Sign out" button
     Then I should see "Signed out successfully"
-    And I should see "Calorie Counter"
+  And I should see "Diet Tracker"

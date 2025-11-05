@@ -1,4 +1,4 @@
-## Calorie Counter Platform
+## Diet Tracker Platform
 
 This Rails 8 application helps users track daily calories and macros. Authenticated users can upload food photos for GPT-powered nutrition analysis, confirm the suggested entry, and monitor remaining targets on a clean dashboard. For accessibility, every workflow also supports manual entry with JavaScript disabled.
 
