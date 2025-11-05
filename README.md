@@ -1,4 +1,4 @@
-# Calorie Counter — AI-Assisted Nutrition Tracker
+## Diet Tracker Platform
 
 Calorie Counter is a Ruby on Rails web application that allows users to log meals, calculate personalized macro targets, and stay accountable across devices. It supports Google OAuth sign-in, onboarding surveys that tailor goals, AI-powered photo analysis for food entries, and an accessible dashboard that works even when JavaScript is disabled.
 
