@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title><%= content_for(:title) || "Csce606 Group2 Project2" %></title>
+  <title><%= content_for(:title) || "Diet Tracker" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -25,7 +25,7 @@
   <body>
     <header class="site-header">
       <div class="container flex-between">
-        <%= link_to "Calorie Counter", root_path, class: "brand" %>
+  <%= link_to "Diet Tracker", root_path, class: "brand" %>
         <nav>
           <ul class="nav-list">
             <% if user_signed_in? %>
@@ -52,7 +52,7 @@
 
     <footer class="site-footer">
       <div class="container">
-        <small>&copy; <%= Time.zone.now.year %> Calorie Counter</small>
+  <small>&copy; <%= Time.zone.now.year %> Diet Tracker</small>
       </div>
     </footer>
   </body>
